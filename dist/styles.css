@@ -85,13 +85,11 @@ dialog{border:0;color:var(--ink);background:var(--paper)}dialog::backdrop{backgr
 @media print{.mobile-menu{display:none!important}.app-page{background:var(--paper);padding:0}.app-shell{border-radius:0;box-shadow:none;min-height:0;padding-bottom:0}.app-footer{position:static;transform:none;box-shadow:none;border-radius:0}.home-indicator{margin-bottom:0}.app-page{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
 @media(max-width:370px){.app-page .routine-toggle{font-size:.6875rem;padding:6px}.app-page .care-row{gap:3px}.app-page .care-row>.art{width:51px}.app-page .mood-choice{font-size:.625rem}.app-page .mood-face{width:42px;height:42px}.app-page .change-options{gap:5px}.app-page .change-options>button{font-size:.6875rem;padding:8px}.app-page .summary-row{font-size:.6875rem}.app-page .summary-row>span:last-child{font-size:.625rem}}
 
-/* Personal-care choice and high-visibility change callouts. */
+/* Personal-care choice and calm, easy-to-scan change cards. */
 .personal-care-options{flex-wrap:nowrap}.personal-care-options .routine-toggle{min-width:92px;justify-content:center}
-.changes-section{margin:20px -12px 0;padding:15px 12px 17px;border:1px solid #e5c5b7;border-left:4px solid #a64f3d;border-radius:11px;background:#faeee8}
-.change-kicker{display:flex;align-items:center;gap:7px;color:#78392f;font-size:.625rem;font-weight:700;letter-spacing:1.15px;line-height:1.2}
-.change-alert-icon{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:#a64f3d;color:#fff;font-size:.75rem;font-weight:750;letter-spacing:0}
-.changes-section .section-heading,.changes-review .section-heading{margin-top:8px}.changes-section .section-heading h2,.changes-review .section-heading h2{font-weight:700;color:#4b2b25}.changes-section .optional-label{color:#78392f;font-weight:650}
-.changes-section .change-options>button{border-color:#d9b7a8;background:#fff9f6;color:#583b34}.changes-section .change-options>button:hover{background:#f7dfd4}.changes-section .change-options>button>span{color:#874637}
-.changes-section .saved-changes{color:#67392e}.changes-section .saved-changes button{background:#f1d1c2;color:#60362d}
-.changes-review{margin:25px -10px 23px;padding:15px 12px 17px;border:1px solid #e5c5b7;border-left:4px solid #a64f3d;border-radius:9px;background:#faeee8}.changes-review .text-button{color:#78392f}.changes-review .change-summary{border-left-color:#a64f3d}.changes-review .change-summary strong{color:#5d332b}.changes-review .change-summary p{color:#6f5b55}.changes-review .no-changes{color:#6f5b55}
+.changes-section{margin:20px -12px 0;padding:17px 12px 18px;border:1px solid #d9ddcf;border-radius:12px;background:#f3f3eb}
+.changes-section .section-heading h2,.changes-review .section-heading h2{font-weight:650;color:var(--ink)}.changes-section .optional-label{color:var(--muted);font-weight:550}
+.changes-section .change-options>button{border-color:#d5d9cc;background:#fbfaf5;color:#505a49}.changes-section .change-options>button:hover{background:#e9eddf}.changes-section .change-options>button>span{color:#7c866c}
+.changes-section .saved-changes{color:#65704f}.changes-section .saved-changes button{background:#e5e9d8;color:#536043}
+.changes-review{margin:25px -10px 23px;padding:17px 14px 18px;border:1px solid #dddccf;border-radius:12px;background:#f3f1e8}.changes-review .text-button{color:#657248}.changes-review .change-summary{border-left-color:#c9cdbb}.changes-review .change-summary strong{color:#56614e}.changes-review .change-summary p{color:#777b6d}.changes-review .no-changes{color:var(--muted)}
 @media(max-width:370px){.personal-care-options .routine-toggle{min-width:82px}.changes-section{margin-left:-8px;margin-right:-8px}.changes-review{margin-left:-6px;margin-right:-6px}}
