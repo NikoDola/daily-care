@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="color-scheme" content="light">
+    <meta name="theme-color" content="#f7f1e6">
+    <title>InkTree Daily Care — A short note to families</title>
+    <meta name="description" content="Tell us what you would want to know about your loved one's day in a five-minute family interview.">
+
+    <meta property="og:title" content="InkTree Daily Care — A short note to families">
+    <meta property="og:description" content="Tell us what you would want to know about your loved one's day in a five-minute family interview.">
+    <meta property="og:type" content="website">
+
+    <link rel="stylesheet" href="styles.css?v=2">
+</head>
+<body>
+<!--
+  THESIS: A quiet letter from InkTree to families with a loved one in care.
+  Not a product page, not a promo — a note that reads like it was written by
+  a person, in a warm serif on cream paper. The category default (dark tech,
+  neon accent, hero video) is what this page refuses.
+
+  OWN-WORLD: warm cream ground with a single terracotta ink accent. The
+  system serif stack (Iowan Old Style / Charter / Palatino / Georgia) — the
+  same reading grain Substack ships and warmer than any Google Font. No
+  cards. No gradients. No shadows on the paper. One hairline rule per
+  transition. Content column is ~640px, book-page proportions.
+
+  STORY: A caregiver-of-a-caregiver, exhausted, arrives from a QR code on a
+  card. The page speaks to them as an adult in grief and love, not a "user."
+  They watch the 58s note, and when it ends, the paper glides down into the
+  form as if the letter is continuing.
+
+  FIRST VIEWPORT: Small InkTree wordmark, an editorial title in the system
+  serif at ~52px, standfirst body underneath. The video sits below at
+  content width, framed only by a hairline. No CTA — the CTA is the video
+  ending, and the page moving on its own.
+
+  FORM: A letter-in-two-halves. Signature moment: the video's `ended` event
+  glides the page to a warm hairline that lights briefly around the form,
+  as if the page is finishing a sentence and starting a new paragraph.
+
+  FINISH: unreviewed and undocumented is unfinished; this build ends with the
+  finish review, the verdict, and DESIGN.md.
+-->
+
+<a class="skip-link" href="#form-section">Skip to the questions</a>
+
+<header class="masthead" role="banner">
+    <div class="masthead-inner">
+        <a class="wordmark" href="/" aria-label="InkTree">
+            <img src="inktree-logo.png" alt="" width="32" height="32" aria-hidden="true">
+            <span>InkTree</span>
+        </a>
+        <span class="masthead-meta">A note from Daily Care</span>
+    </div>
+</header>
+
+<main class="letter">
+
+    <article class="lede">
+        <h1>What would you want to know about your loved one&rsquo;s day?</h1>
+        <p class="standfirst">
+            We&rsquo;re exploring a better way for families to hear about the everyday moments
+            that matter&mdash;meals, mood, activities, and more. Watch this 58-second note,
+            then take five minutes to tell us what you would want in a daily care update.
+        </p>
+    </article>
+
+    <figure class="video-figure" id="video-section">
+        <div class="video-frame">
+            <!-- Local MP4 for immediate deploy. Swap for Cloudflare Stream iframe
+                 when uploaded; keep the id="video" so script.js finds it. -->
+            <video
+                id="video"
+                controls
+                playsinline
+                preload="metadata"
+                poster=""
+            >
+                <source src="DailyCarePromo.mp4" type="video/mp4">
+                Your browser doesn't support HTML5 video.
+                <a href="DailyCarePromo.mp4">Download the video</a>.
+            </video>
+        </div>
+        <figcaption class="video-caption">
+            Fifty-eight seconds. Best watched with sound.
+        </figcaption>
+    </figure>
+
+    <p class="scroll-cue" id="scroll-hint" aria-hidden="true">
+        When you're ready — a few questions below.
+    </p>
+
+    <section class="form-section" id="form-section" aria-label="Your feedback">
+        <div class="form-heading">
+            <h2>Your turn.</h2>
+            <p class="form-lede">
+                Everything you share stays private and is used only to shape Daily Care.
+                No emails, no marketing, no sales calls.
+            </p>
+        </div>
+
+        <div class="form-embed" role="region" aria-label="InkTree Daily Care Family Interview form">
+            <iframe
+                id="google-form"
+                src="about:blank"
+                data-placeholder-src="https://docs.google.com/forms/d/e/1FAIpQLSe1GrxhPIEspMiRkhwGpp3u-cO9iyDfB78_vfvLdb_nHD-XZg/viewform?embedded=true"
+                title="InkTree Daily Care Family Interview">
+                Loading form…
+            </iframe>
+        </div>
+    </section>
+
+    <footer class="closing">
+        <p class="signature">
+            With care,<br>
+            <span class="signer">The InkTree team</span>
+        </p>
+        <p class="fine-print">
+            Questions or trouble with the form? Write to
+            <a href="/cdn-cgi/l/email-protection#3e5a5f575247135d5f4c5b7e5750554a4c5b5b105f57"><span class="__cf_email__" data-cfemail="402421292c396d2321322500292e2b343225256e2129">[email&#160;protected]</span></a>.
+        </p>
+    </footer>
+
+</main>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="script.js"></script>
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v31edd6df95cf4e85bb4c19e7a9bdbcba1788362987495" integrity="sha512-iIg7k2xntmwu6/uSb5tpc/hySgZc4eoL31yB29W6tJFo2akwjPWcEqnCEdJvGexCL0KEQwVYv5BlowfhVz26hg==" data-cf-beacon='{"version":"2024.11.0","token":"5efd8ce1726a4787b9bf128014eab974","r":1,"spa":2}' crossorigin="anonymous"></script>
+</body>
+</html>
