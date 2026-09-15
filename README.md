@@ -59,3 +59,14 @@ Nothing is sent to a family or backend. Demo identities and care entries are fic
 - `server.js` — dependency-free localhost-only static server
 
 Run `npm run check` for JavaScript syntax validation.
+
+## GitHub Pages client preview
+
+The repository root is a standalone static mobile prototype. It needs no build step or server-side code.
+
+1. Push the repository to GitHub.
+2. Open **Settings → Pages**.
+3. Choose **Deploy from a branch**, select the main branch and the **/(root)** folder, then save.
+4. Share the generated GitHub Pages URL with the client.
+
+The root `index.html` opens the DailyCare entry screen directly. `review.html`, `styles.css`, `app.js`, and `assets/` support the interactive flow. All demo data remains in the visitor's browser session and nothing is sent to a backend.
