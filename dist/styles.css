@@ -89,3 +89,4 @@ dialog{border:0;color:var(--ink);background:var(--paper)}dialog::backdrop{backgr
 .personal-care-options{flex-wrap:nowrap;justify-content:flex-start!important;gap:8px}.personal-care-options .routine-toggle{min-width:92px;justify-content:center}
 .changes-review{margin:25px 0 23px;padding:0;border:0;background:none}.changes-review .section-heading h2{font-size:1.25rem;font-weight:700;color:var(--ink)}.changes-review .text-button{color:#657248}.changes-review .change-summary{padding-left:14px;border-left:3px solid #b45c4a}.changes-review .change-summary strong{color:#56614e}.changes-review .change-summary p{color:#777b6d}.changes-review .no-changes{color:var(--muted)}
 @media(max-width:370px){.personal-care-options .routine-toggle{min-width:82px}.changes-review{margin-left:-6px;margin-right:-6px}}
+.studio,.studio-header{background:#fff}
