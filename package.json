@@ -3,5 +3,5 @@
   "version": "1.0.0",
   "private": true,
   "description": "A screenshot-ready DailyCare prototype in plain HTML, CSS, and small vanilla JavaScript.",
-  "scripts": { "start": "node server.js", "dev": "node server.js", "check": "node --check dist/app.js && node --check dist/menu.js && node --check server.js" }
+  "scripts": { "start": "node server.js", "dev": "node server.js", "check": "node --check dist/shared.js && node --check server.js" }
 }

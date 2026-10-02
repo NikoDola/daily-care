@@ -14,7 +14,7 @@ const path = require('node:path');
     const layout = await page.evaluate(() => ({
       width: document.documentElement.scrollWidth,
       height: document.documentElement.scrollHeight,
-      screens: document.querySelectorAll('.board-phone img').length,
+      screens: document.querySelectorAll('.story-phone img').length,
       overflowingText: [...document.querySelectorAll('h1,h2,h3,h4,p,code')].filter(element => element.scrollWidth > element.clientWidth + 1).map(element => element.textContent)
     }));
     const destination = path.resolve(__dirname, '..', 'client-screenshots', 'DailyCare-complete-presentation.png');
