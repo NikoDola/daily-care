@@ -29,7 +29,7 @@ The original design is preserved. Use the menu to switch between Anna Lewis (mor
 
 ## Matching example screens
 
-- `/care.html?stage=morning` - breakfast recorded by Anna; observations open.
+- `/care.html?stage=morning` - breakfast and AM medication recorded by Anna; lunch and later care still open.
 - `/care.html?stage=anna-end` - Anna's saved part as information, with Edit my entries.
 - `/care.html?stage=saved` - Save my part confirmation.
 - `/care.html?stage=handover` - Jane's shift, with dinner, PM medication, bathing and grooming open; Anna's entries are read-only.

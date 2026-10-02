@@ -12,7 +12,7 @@ The morning schedule labels lunch and evening care as later today; Jane's final 
 
 “Save my part” explicitly says nothing has been sent. Jane reviews the combined day before preparing one family update. A recording gap requires a return to the specific item or an explicit choice to send it as “not recorded.” The family view begins with the saved personal moment, follows with changes and gaps, and names the caregivers who recorded care.
 
-The six main screens follow one actual interactive session: Anna records good breakfast and lunch, AM medication, calm mood, restless sleep with a reassurance note, and a conversation about roses. Jane records dinner, evening medication, a bath and grooming, then sends one daily update to Sophie (daughter) and James (son). Screen six is a clearly labelled alternative where grooming is unrecorded; that same gap appears in the accompanying family update. No summary invents care or a personal moment.
+The six main screens follow one actual interactive session: Anna first records good breakfast and AM medication given. Later she records lunch, calm mood, restless sleep with a reassurance note, and a conversation about roses. Jane records dinner, evening medication, a bath and grooming, then sends one daily update to Sophie (daughter) and James (son). Screen six is a clearly labelled alternative where grooming is unrecorded; that same gap appears in the accompanying family update. No summary invents care or a personal moment.
 
 This remains a local visual prototype. Caregiver switching represents handover in the same browser session; it is not authentication or a shared backend, and sending is simulated.
 

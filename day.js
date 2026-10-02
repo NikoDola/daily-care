@@ -16,8 +16,9 @@
   function example(stage) {
     const s = fresh();
     s.care.breakfast = true; s.by.breakfast = 'anna';
+    s.care.am = 'given'; s.by.am = 'anna';
     if (stage === 'morning') return s;
-    Object.assign(s.care, { lunch: true, am: 'given' });
+    s.care.lunch = true;
     Object.assign(s, { mood: 'Calm', sleep: 'Restless', concernsChecked: true, note: 'After lunch, Margaret sat by the window and told Anna about the roses she used to grow.', phase: 'handover' });
     s.changes.sleep = { status: 'Restless', note: 'Woke twice overnight and settled after reassurance.' };
     keys.filter(key => recorded(s, key)).concat('note').forEach(key => { s.by[key] = 'anna'; });
