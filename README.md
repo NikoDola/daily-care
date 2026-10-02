@@ -18,7 +18,7 @@ You can also open `dist/index.html` directly. Local file security varies by brow
 
 ## Shared caregiver flow
 
-The original design is preserved. Use the menu to switch between Anna Lewis (morning) and Jane Doe (final shift). A fresh day has no answers selected. Completed answers carry their caregiver's name and can be reopened. Shower and grooming are separate items.
+The original design is preserved. Use the menu to switch between Anna Lewis (morning) and Jane Doe (final shift). A fresh day has no answers selected. Every item's choices remain open for both caregivers. Completed answers stay selected and show who recorded them, with no extra Record now or Review tap. Shower and grooming are separate items.
 
 1. Anna records observed care. Lunch, dinner and PM medication initially show Later today.
 2. Save my part stores her contribution and confirms that nothing has been sent.

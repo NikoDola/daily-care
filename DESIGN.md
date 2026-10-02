@@ -6,7 +6,7 @@ This iteration starts from `eca19a6`. The original stylesheet, warm colors, font
 
 The caregiver remains visible beneath Margaret's name because identity matters while recording. The menu repeats the role, full name and initials avatar; there is no logout item. Anna Lewis records the morning and Jane Doe completes the final shift.
 
-Each answer has an author. Answered items collapse into a short summary and can be reviewed without changing that author. The morning schedule treats lunch, dinner and evening medication as later today; Jane's final shift makes any unanswered items due. Shower and grooming have separate answers. A compact progress line counts recorded items, differences, unanswered care and later care.
+Each answer has an author. Choices remain visible for both caregivers, with the recorded choice selected and its author shown. There is no extra Record now or Review action on an item. The morning schedule labels lunch, dinner and evening medication as later today; Jane's final shift makes any unanswered items due. Shower and grooming have separate answers. A compact progress line counts recorded items, differences, unanswered care and later care.
 
 “Save my part” explicitly says nothing has been sent. Jane reviews the combined day before preparing one family update. A recording gap requires a return to the specific item or an explicit choice to send it as “not recorded.” The family view begins with the saved personal moment, follows with changes and gaps, and names the caregivers who recorded care.
 

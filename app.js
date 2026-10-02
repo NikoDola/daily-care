@@ -57,14 +57,9 @@
     let opener = null;
     let currentMeal = 'breakfast';
     let currentPersonal = 'shower';
-    const expanded = new Set();
-    const faces = Object.fromEntries($$('[data-mood]').map(button => [button.dataset.mood, button.querySelector('.mood-face').outerHTML]));
-    const summary = key => `<div class="recorded-answer">${key === 'mood' ? faces[state.mood] || '' : ''}<div><strong>${['breakfast','lunch','dinner','am','pm','shower','grooming'].includes(key) ? escape(D.labels[key]) + ' · ' : ''}${escape(D.status(key))}</strong>${authorHTML(key)}</div><button class="text-button" data-reopen="${key}" aria-label="Review ${D.labels[key].toLowerCase()}">Review</button></div>`;
     const buttons = (key, kind, options, selected) => `<div class="decision-options" role="group" aria-label="${D.labels[key]}">${options.map(([value, label]) => `<button type="button" data-item="${key}" data-answer-kind="${kind}" data-answer="${value}" aria-pressed="${selected === value}">${label}</button>`).join('')}</div>`;
     function routineItem(key, choices) {
-      if (D.recorded(key) && !expanded.has(key)) return `<div class="care-item" id="item-${key}">${summary(key)}</div>`;
-      if (D.later(key) && !expanded.has(key)) return `<div class="care-item" id="item-${key}"><div class="care-item-heading"><strong>${D.labels[key]}</strong><span class="later-label">Later today</span></div><button class="text-button" data-reopen="${key}">Record now</button></div>`;
-      return `<div class="care-item" id="item-${key}"><div class="care-item-heading"><strong>${D.labels[key]}</strong>${authorHTML(key)}</div>${choices}${D.recorded(key) ? `<button class="close-answer" data-collapse="${key}">Close without changes</button>` : ''}</div>`;
+      return `<div class="care-item" id="item-${key}"><div class="care-item-heading"><strong>${D.labels[key]}</strong>${D.recorded(key) ? authorHTML(key) : D.later(key) ? '<span class="later-label">Later today</span>' : ''}</div>${choices}</div>`;
     }
     function updateCare() {
       $('#meal-items').innerHTML = mealKeys.map(key => routineItem(key, buttons(key, 'meal', [['well','Ate well'],['less','Ate less'],['none','Did not eat']], state.care[key] === null ? '' : state.mealDetails[key] ? (state.care[key] ? 'less' : 'none') : 'well'))).join('');
@@ -77,10 +72,9 @@
         const section = $(selector);
         section.id = `item-${key}`;
         section.querySelector('.answer-summary')?.remove();
-        const closed = D.recorded(key) && !expanded.has(key);
-        section.querySelector('.answer-choices').hidden = closed;
+        section.querySelector('.answer-choices').hidden = false;
         const note = key === 'concerns' ? '' : state.changes[key]?.note || '';
-        section.insertAdjacentHTML('beforeend', `<div class="answer-summary">${closed ? summary(key) + (note ? `<p class="answer-note">${escape(note)}</p>` : '') : D.recorded(key) ? `${authorHTML(key)}<button class="close-answer" data-collapse="${key}">Close without changes</button>` : ''}</div>`);
+        section.insertAdjacentHTML('beforeend', `<div class="answer-summary">${D.recorded(key) ? authorHTML(key) : ''}${note ? `<p class="answer-note">${escape(note)}</p>` : ''}</div>`);
       }
       const completed = D.keys.filter(D.recorded).length;
       const later = D.keys.filter(D.later).length;
@@ -99,10 +93,6 @@
       updateIdentity();
     }
     document.addEventListener('click', event => {
-      const reopen = event.target.closest('[data-reopen]');
-      if (reopen) { expanded.add(reopen.dataset.reopen); updateCare(); }
-      const collapse = event.target.closest('[data-collapse]');
-      if (collapse) { expanded.delete(collapse.dataset.collapse); updateCare(); }
       const answer = event.target.closest('[data-answer-kind]');
       if (!answer) return;
       const { item: key, answer: value, answerKind: kind } = answer.dataset;
@@ -114,33 +104,33 @@
         if (state.care[key] !== value) delete state.medicationDetails[key];
         state.care[key] = value;
       } else state.personal[key] = value;
-      expanded.delete(key); persist(); updateCare();
+      persist(); updateCare();
       if (kind === 'medication' && value !== 'given') { currentDose = key; openDetail('medication', answer); }
       if (kind === 'personal' && value !== 'Done') { currentPersonal = key; openDetail('personalCare', answer); }
     });
     $$('[data-mood]').forEach(button => button.addEventListener('click', () => {
       state.mood = button.dataset.mood;
       if (['Withdrawn','Anxious','Agitated'].includes(state.mood)) state.changes.mood = { ...(state.changes.mood || {}), status: state.mood }; else delete state.changes.mood;
-      expanded.delete('mood'); persist(); updateCare();
+      persist(); updateCare();
       if (state.changes.mood) openDetail('mood', button);
     }));
     $$('[data-sleep]').forEach(button => button.addEventListener('click', () => {
       state.sleep = button.dataset.sleep;
       if (state.sleep === 'As usual') delete state.changes.sleep; else state.changes.sleep = { ...(state.changes.sleep || {}), status: state.sleep };
-      expanded.delete('sleep'); persist(); updateCare();
+      persist(); updateCare();
       if (state.sleep !== 'As usual') openDetail('sleep', button);
     }));
     $$('[data-concern]').forEach(button => button.addEventListener('click', () => {
       const type = button.dataset.concern;
-      if (type === 'none') { concernKeys.forEach(key => delete state.changes[key]); state.concernsChecked = true; expanded.delete('concerns'); persist(); updateCare(); return; }
+      if (type === 'none') { concernKeys.forEach(key => delete state.changes[key]); state.concernsChecked = true; persist(); updateCare(); return; }
       if (!state.changes[type]) state.changes[type] = {};
       state.concernsChecked = true;
-      expanded.delete('concerns'); persist(); updateCare(); openDetail(type, button);
+      persist(); updateCare(); openDetail(type, button);
     }));
     $('#care-date').addEventListener('change', event => {
       if (!event.target.value) { event.target.value = state.date; return; }
       const next = D.fresh(event.target.value); next.caregiver = state.caregiver; next.phase = state.phase;
-      D.replace(next); state = D.state; expanded.clear(); updateCare(); toast('A fresh entry for this date.');
+      D.replace(next); state = D.state; updateCare(); toast('A fresh entry for this date.');
     });
     $('#save-part').addEventListener('click', () => {
       if (!persist()) { toast('This browser could not save your part. Keep this page open.'); return; }
@@ -197,7 +187,13 @@
       }
       if (event.target.closest('[data-action="remove-photo"]')) { state.photo = ''; persist(); openDetail('note'); toast('Photo removed.'); }
     });
-    function closeDetail() { dialog.close(); if (opener?.isConnected && opener.getClientRects().length) opener.focus({ preventScroll: true }); else document.querySelector('[data-reopen="' + (currentDetail === 'medication' ? currentDose : currentDetail === 'personalCare' ? currentPersonal : currentDetail) + '"]')?.focus({ preventScroll: true }); }
+    function closeDetail() {
+      dialog.close();
+      const key = currentDetail === 'medication' ? currentDose : currentDetail === 'personalCare' ? currentPersonal : currentDetail === 'appetite' ? currentMeal : '';
+      const fallback = key ? document.querySelector(`[data-item="${key}"][aria-pressed="true"]`) || document.querySelector(`[data-item="${key}"]`) : document.querySelector(`[data-detail="${currentDetail}"]`);
+      const target = opener?.isConnected && opener.getClientRects().length ? opener : fallback;
+      target?.focus({ preventScroll: true });
+    }
     $('[data-action="close-detail"]').addEventListener('click', closeDetail);
     dialog.addEventListener('click', event => { if (event.target === dialog && event.clientY < dialog.getBoundingClientRect().top) closeDetail(); });
     $('#detail-form').addEventListener('submit', async event => {
@@ -223,7 +219,6 @@
           const meal = values.meal.toLowerCase();
           state.mealDetails[meal] = { portion: values.portion, note: values.note || '' };
           state.care[meal] = values.portion !== 'None';
-          expanded.delete(meal);
           if (state.changes.appetite) state.changes.appetite = { note: values.note || '' };
         } else if (currentDetail === 'personalCare') state.changes[currentPersonal] = values;
         else state.changes[currentDetail] = values;
@@ -236,7 +231,6 @@
     if (params.has('detail')) openDetail(params.get('detail'));
     if (params.has('focus')) {
       const key = params.get('focus');
-      if (D.keys.includes(key)) { expanded.add(key); updateCare(); }
       requestAnimationFrame(() => (document.getElementById(`item-${key}`) || document.getElementById(`${key}-title`))?.scrollIntoView({ block: 'center' }));
     }
     if (params.get('stage') === 'saved') $('#save-part').click();
