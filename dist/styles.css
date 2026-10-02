@@ -107,3 +107,43 @@ dialog{border:0;color:var(--ink);background:var(--paper)}dialog::backdrop{backgr
 .sleep-review{margin-top:22px;margin-bottom:0;padding-bottom:16px;border-bottom:1px solid var(--line)}
 .sleep-review p{font-size:.875rem;color:#626b56;margin-top:8px}
 @media(max-width:350px){.decision-options button{font-size:.8125rem;padding:9px 10px}}
+
+/* Recorded answers and legible secondary copy. */
+.app-page{--muted:#586251}
+.app-page .section-helper,.app-page .usual-state,.app-page .day-heading>p,.app-page .footer-meta,.app-page .add-moment>span:nth-child(2)>span,.app-page .review-intro>div>span,.app-page .review-person>div>span,.app-page .detail-description,.app-page .sheet-footnote{color:#586251}
+.usual-state{font-size:.75rem;line-height:1.4;color:#586251;margin:-2px 0 9px}
+.app-page .routine-toggle{color:#596650}
+.app-page .mood-choice{color:#596650;min-width:0;flex:1}
+.app-page .mood-choice[aria-pressed=true]{color:#30462c}
+.agitated{background:#e9b9a9;transform:rotate(-4deg);border-radius:14px 12px 17px 12px}
+.app-page .medication-row{align-items:flex-start;padding:4px 0}
+.app-page .medication-row>.art{margin-top:27px}
+.dose-row{display:flex;align-items:center;gap:5px;margin-top:7px}
+.dose-row strong{flex:0 0 26px;font-size:.75rem;color:#44533e}
+.dose-row button{flex:1;min-width:0;min-height:36px;padding:7px 2px;border:1px solid #cbd2c2;border-radius:7px;background:#fffdf8;color:#4d5a48;font-size:.72rem;line-height:1.15}
+.dose-row button[aria-pressed=true]{border-color:#92a67b;background:var(--sage);color:#30462c;font-weight:650}
+.dose-row button[aria-pressed=true]::before{content:'✓ ';font-weight:700}
+.dose-row button:hover{border-color:#788f67}
+.dose-row button:focus-visible{outline:3px solid #947c48;outline-offset:2px}
+.app-page .decision-options button{color:#4e5c49;border-color:#cbd2c2}
+.app-page .decision-options button[aria-pressed=true]{color:#30462c}
+.app-page .review-group{padding:14px 0 8px;border-bottom:1px solid var(--line)}
+.app-page .review-group h3{font-size:.875rem;font-weight:650;margin-bottom:5px}
+.review-item{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:7px 0;font-size:.8125rem}
+.review-item>span{color:#52604d}
+.review-item strong{font-weight:600;color:#354532;text-align:right}
+.review-item strong.unrecorded,.sleep-review .unrecorded{color:#775325;background:#f8eac9;padding:3px 7px;border-radius:5px}
+.review-item-note{font-size:.75rem;color:#52604d;line-height:1.5;margin:-1px 0 7px 16px}
+.app-page .missing-items{background:#f8eac9;color:#493d2b;border:1px solid #d5b877;padding:15px;margin-top:17px;font-size:.8125rem}
+.missing-items>strong{display:block;font-size:.875rem;margin-bottom:8px}
+.missing-items ul{padding-left:19px;margin:0 0 13px;line-height:1.7}
+.missing-items a{display:inline-flex;align-items:center;min-height:38px;color:#354a2e;font-weight:700;text-decoration:underline;text-underline-offset:3px}
+.send-unrecorded{display:flex;align-items:flex-start;gap:9px;border-top:1px solid #d5b877;padding-top:12px;margin-top:7px;font-weight:550;line-height:1.45;cursor:pointer}
+.send-unrecorded input{width:18px;height:18px;flex:none;accent-color:#3d4d37;margin:1px 0 0}
+.concern-status{font-size:.8125rem;color:#52604d;margin-top:9px;font-weight:550}
+.app-page .change-summary p,.app-page .no-changes,.app-page .sleep-review p{color:#52604d}
+.app-page .send-hint{color:#52604d}
+.app-page .recipient>span>span,.app-page .review-step,.app-page .review-hero>.eyebrow,.app-page .moment-review .eyebrow,.app-page .moment-signature,.app-page .detail-dialog .eyebrow,.app-page .textarea-footer,.app-page .micro-label,.app-page .date-line{color:#52604d}
+.app-page .recipient:has(input:not(:checked)){opacity:.75}
+@media(max-width:370px){.dose-row{gap:4px}.dose-row strong{flex-basis:23px}.dose-row button{font-size:.66rem;padding:7px 1px}.app-page .mood-choice{font-size:.61rem}}
+.system-main .system-intro>p,.system-main .token-caption,.system-main .system-notes,.system-main .swatch code,.system-main .behavior-table td:nth-child(2),.system-main .behavior-table td:last-child{color:#52634d}

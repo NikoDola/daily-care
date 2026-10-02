@@ -21,11 +21,11 @@ Reference images are research material only and are not used as app artwork. The
 ## Information hierarchy
 
 1. Person, caregiver, and date stay explicit.
-2. Everyday care groups six routines into meals, medication, and a distinct shower-or-grooming personal-care choice.
+2. Everyday care asks for individual meal answers, a given/not given/refused answer for each medication dose, and a shower-or-grooming personal-care choice. Usual states are context, never preselected answers.
 3. Mood, sleep, and concern choices are visible on the daily screen so each can be checked directly.
 4. A changed choice opens a focused sheet for follow-up context, such as the meal, portion, and note for appetite.
 5. The personal note/photo is optional.
-6. Review separates routine completion, notable changes, unrecorded items, and the personal moment.
+6. Review lists each recorded answer, separates notable changes, and makes every missing item explicit. Caregivers complete missing answers or choose to send them as not recorded.
 7. Family recipients are visible and individually selectable before the simulated send.
 
 ## Components and states
@@ -35,13 +35,13 @@ The visible system page uses the exact shared CSS classes. CSS tokens at the top
 | Component | Class | States |
 | --- | --- | --- |
 | Primary action | `.primary-button` | Default, hover, focus-visible, pressed, disabled |
-| Routine toggle | `.routine-toggle` | Unrecorded, recorded (`aria-pressed`), hover, focus |
+| Routine answer | `.routine-toggle`, `.dose-row` | Unrecorded, recorded (`aria-pressed`), hover, focus |
 | Mood choice | `.mood-choice` | Default, selected (`aria-pressed`), hover, focus |
 | Daily decision | `.decision-options` | Unrecorded, selected (`aria-pressed`), detail sheet open |
 | Meal selector | `.segmented-control` | Native radio, checked, keyboard focus |
 | Portion selector | `.portion-option` | Native radio, filled-plate quantity, checked, keyboard focus |
 | Detail sheet | `.detail-dialog` | Open/closed, save/cancel, remove saved detail |
-| Review summary | `.summary-row` | Recorded, explicit exception, not recorded |
+| Review summary | `.review-item` | Recorded, explicit exception, not recorded |
 | Change summary | `.change-summary` | Change type, selected value, optional note |
 | Recipient | `.recipient` | Selected/unselected native checkbox, focus |
 | Feedback | `.toast`, `.sent-dialog` | Local saved feedback, simulated send confirmation |
@@ -52,12 +52,12 @@ Native dialogs manage keyboard focus. Buttons expose accessible names and presse
 
 This is intentionally local and lightweight. No authentication, backend, real messaging, durable care history, or provider integration. One fixed demo person, caregiver, and pair of recipients. Session storage is an active-draft convenience, not medical-record storage. Attached photos remain local. Photo size is limited to 4 MB for the demo. A different care date starts a fresh draft.
 
-The presentation page isolates each iframe's sample state. It shows an ordinary partial entry, an appetite-detail overlay, and a completed sample update; these are independent design states rather than a claim that the same data is mirrored between all three.
+The main presentation screens show one matching example day: all meals eaten, AM and PM medication given, grooming, calm mood, restless sleep with a note, and no additional concerns. The medication exception in the supporting section is labeled as an alternative example.
 
 ## Validation scope
 
-Local routes, asset references, unique IDs, HTML parsing, font loading references, and JavaScript syntax were checked. Client exports were subsequently rendered in isolated headless Chromium with iPhone emulation at a 390px viewport and 3× scale. The capture pass reported no page errors and no horizontal overflow. The main screens, detail states, navigation menu, design system, and combined presentation were visually inspected. This is screenshot validation, not a full end-to-end interaction test suite.
+Local routes, assets, JavaScript syntax, and the entry-to-review flow were checked. Browser checks cover a fully recorded day, missing answers and the explicit send choice, and a refused PM medication dose. Client exports are rendered in headless Chromium at a 390px viewport and 3× scale, with checks for page errors and horizontal overflow.
 
 The concise client presentation is in `dist/client-presentation.html`; final RGB PNGs are in `client-screenshots/`. The numbered screens and concise presentation match the original upload limits.
 
-The later complete presentation, `dist/complete-presentation.html`, combines all six screen states with brief explanations and the visual design system. Its PNG and lossless WebP masters are 3200 × 9614, intentionally wider than the original limit to preserve detail as the user requested. Its layout was checked for missing images, clipping, and browser errors, and visually inspected in three sections.
+The complete presentation, `dist/complete-presentation.html`, combines six screen states with brief explanations and the visual design system. Its PNG master is 3200 × 12062, and its WebP copy is 1600 × 6031. The layout was checked for missing images, clipping, and browser errors. The first three screens show one consistent care record; the supporting medication and missing-answer states are labeled as alternative examples.

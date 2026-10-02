@@ -38,20 +38,30 @@ async function ready(page) {
     console.log(filename, JSON.stringify(await page.evaluate(() => ({ width: innerWidth, height: innerHeight, scroll: document.documentElement.scrollHeight, overflow: document.documentElement.scrollWidth > innerWidth }))));
   };
 
-  await shot('01-daily-care.png', '/care.html?embed=1', { full: true });
-  await shot('02-appetite-details.png', '/care.html?embed=1&detail=appetite');
-  await shot('03-other-changes.png', '/care.html?embed=1&detail=more');
+  await shot('01-daily-care.png', '/care.html?embed=1&sample=1', { full: true });
+  await shot('02-sleep-details.png', '/care.html?embed=1&sample=1&detail=sleep');
+  await shot('03-other-changes.png', '/care.html?embed=1&sample=1', { setup: async page => { await page.locator('#changes-title').scrollIntoViewIfNeeded(); } });
   await shot('04-review-and-send.png', '/review.html?embed=1&sample=1', { full: true });
-  await shot('05-mobile-menu.png', '/care.html?embed=1', { setup: async page => { await page.locator('.mobile-menu > summary').click(); } });
-  await shot('06-medication-details.png', '/care.html?embed=1&detail=medication');
+  await shot('05-mobile-menu.png', '/care.html?embed=1&sample=1', { setup: async page => { await page.locator('.mobile-menu > summary').click(); } });
+  await shot('06-medication-details.png', '/care.html?embed=1&sample=1', { setup: async page => { await page.locator('[data-dose="pm"][data-med-status="refused"]').click(); } });
+  await shot('08-missing-items.png', '/care.html?embed=1', { full: true, setup: async page => {
+    for (const meal of ['breakfast', 'lunch']) await page.locator(`[data-care="${meal}"]`).click();
+    await page.locator('[data-dose="am"][data-med-status="given"]').click();
+    await page.locator('[data-personal-care="grooming"]').click();
+    await page.locator('[data-mood="Calm"]').click();
+    await page.locator('[data-sleep="As usual"]').click();
+    await page.locator('[data-concern="none"]').click();
+    await page.locator('#review-link').click();
+    await page.waitForURL(/review\.html/);
+  } });
 
   await fs.copyFile(path.join(destination, '01-daily-care.png'), path.join(presentationAssets, 'daily-care.png'));
+  await fs.copyFile(path.join(destination, '02-sleep-details.png'), path.join(presentationAssets, 'sleep-detail.png'));
+  await fs.copyFile(path.join(destination, '03-other-changes.png'), path.join(presentationAssets, 'other-changes.png'));
   await fs.copyFile(path.join(destination, '04-review-and-send.png'), path.join(presentationAssets, 'review.png'));
-  await page.setViewportSize({ width: 390, height: 1200 });
-  await page.goto(origin + '/care.html?embed=1&detail=appetite', { waitUntil: 'networkidle' });
-  await ready(page);
-  await page.locator('dialog[open] .sheet-top .eyebrow').click();
-  await page.screenshot({ path: path.join(presentationAssets, 'appetite.png'), animations: 'disabled' });
+  await fs.copyFile(path.join(destination, '05-mobile-menu.png'), path.join(presentationAssets, 'mobile-menu.png'));
+  await fs.copyFile(path.join(destination, '06-medication-details.png'), path.join(presentationAssets, 'medication-detail.png'));
+  await fs.copyFile(path.join(destination, '08-missing-items.png'), path.join(presentationAssets, 'missing-items.png'));
 
   await page.setViewportSize({ width: 1200, height: 900 });
   await page.goto(origin + '/system.html', { waitUntil: 'networkidle' });
