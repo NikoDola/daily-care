@@ -16,6 +16,7 @@
   const byline = key => state.by[key] ? `Recorded by ${D.people[state.by[key]].first}` : '';
   const authorHTML = key => byline(key) ? `<span class="byline">${escape(byline(key))}</span>` : '';
   const person = () => D.people[state.caregiver];
+  const observationHTML = item => `<div class="later-observation"><strong>${escape(item.category)}</strong><p class="answer-note">${escape(item.note)}</p><span class="byline">Recorded by ${escape(D.people[item.caregiver]?.first || '')} · ${escape(D.people[item.caregiver]?.shift || '')}</span></div>`;
   if (embedded) document.documentElement.classList.add('embedded');
   function updateIdentity() {
     const holder = $('#menu-caregiver');
@@ -57,14 +58,23 @@
     let opener = null;
     let currentMeal = 'breakfast';
     let currentPersonal = 'shower';
+    let editing = false;
+    let observationIndex = -1;
+    const canEdit = key => D.canEdit(key) && (!state.saved[state.caregiver] || editing) && !(state.caregiver === 'anna' && state.phase === 'handover' && D.later(key));
+    const faces = Object.fromEntries($$('[data-mood]').map(button => [button.dataset.mood, button.querySelector('.mood-face').outerHTML]));
+    function recordedInfo(key) {
+      const note = state.mealDetails[key]?.note || state.medicationDetails[key] || state.changes[key]?.note || '';
+      return `<div class="recorded-answer">${key === 'mood' ? faces[state.mood] || '' : ''}<div><strong>${escape(D.status(key))}</strong>${authorHTML(key)}</div></div>${note ? `<p class="answer-note">${escape(note)}</p>` : ''}`;
+    }
     const buttons = (key, kind, options, selected) => `<div class="decision-options" role="group" aria-label="${D.labels[key]}">${options.map(([value, label]) => `<button type="button" data-item="${key}" data-answer-kind="${kind}" data-answer="${value}" aria-pressed="${selected === value}">${label}</button>`).join('')}</div>`;
     function routineItem(key, choices) {
+      if (!canEdit(key)) return `<div class="care-item" id="item-${key}"><div class="care-item-heading"><strong>${D.labels[key]}</strong>${!D.recorded(key) && D.later(key) ? '<span class="later-label">Later today</span>' : ''}</div>${D.recorded(key) ? recordedInfo(key) : `<p class="answer-note">${D.later(key) ? 'For the next shift' : 'Not recorded'}</p>`}</div>`;
       return `<div class="care-item" id="item-${key}"><div class="care-item-heading"><strong>${D.labels[key]}</strong>${D.recorded(key) ? authorHTML(key) : D.later(key) ? '<span class="later-label">Later today</span>' : ''}</div>${choices}</div>`;
     }
     function updateCare() {
       $('#meal-items').innerHTML = mealKeys.map(key => routineItem(key, buttons(key, 'meal', [['well','Ate well'],['less','Ate less'],['none','Did not eat']], state.care[key] === null ? '' : state.mealDetails[key] ? (state.care[key] ? 'less' : 'none') : 'well'))).join('');
       $('#medication-items').innerHTML = doseKeys.map(key => routineItem(key, buttons(key, 'medication', [['given','Given'],['not given','Not given'],['refused','Refused']], state.care[key]))).join('');
-      $('#personal-items').innerHTML = ['shower','grooming'].map(key => routineItem(key, buttons(key, 'personal', [['Done','Done'],['Not done','Not done'],['Declined','Declined']], state.personal[key]))).join('');
+      $('#personal-items').innerHTML = ['shower','grooming'].map(key => routineItem(key, buttons(key, 'personal', key === 'shower' ? [['Bath','Bath'],['Shower','Shower'],['Not done','Not done'],['Declined','Declined']] : [['Done','Done'],['Not done','Not done'],['Declined','Declined']], state.personal[key]))).join('');
       $$('[data-mood]').forEach(button => button.setAttribute('aria-pressed', String(state.mood === button.dataset.mood)));
       $$('[data-sleep]').forEach(button => button.setAttribute('aria-pressed', String(state.sleep === button.dataset.sleep)));
       $$('[data-concern]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.concern === 'none' ? state.concernsChecked && !concernKeys.some(key => state.changes[key]) : Boolean(state.changes[button.dataset.concern]))));
@@ -72,22 +82,33 @@
         const section = $(selector);
         section.id = `item-${key}`;
         section.querySelector('.answer-summary')?.remove();
-        section.querySelector('.answer-choices').hidden = false;
+        section.querySelector('.answer-choices').hidden = !canEdit(key);
         const note = key === 'concerns' ? '' : state.changes[key]?.note || '';
-        section.insertAdjacentHTML('beforeend', `<div class="answer-summary">${D.recorded(key) ? authorHTML(key) : ''}${note ? `<p class="answer-note">${escape(note)}</p>` : ''}</div>`);
+        section.insertAdjacentHTML('beforeend', `<div class="answer-summary">${!canEdit(key) ? recordedInfo(key) : (D.recorded(key) ? authorHTML(key) : '') + (note ? `<p class="answer-note">${escape(note)}</p>` : '')}${key === 'concerns' ? concernKeys.filter(k => state.changes[k]?.note).map(k => `<p class="answer-note">${escape(D.concernNames[k])}: ${escape(state.changes[k].note)}</p>`).join('') : ''}</div>`);
       }
       const completed = D.keys.filter(D.recorded).length;
       const later = D.keys.filter(D.later).length;
       const missing = 10 - completed - later;
       $('#day-progress').innerHTML = `<strong>${completed}/10 recorded</strong><span class="different-count">${D.changes().length} different</span><span>${missing} to record</span>${later ? `<span>${later} later today</span>` : ''}`;
       $('#care-count').textContent = `${completed} of 10 recorded`;
-      $('#draft-status').textContent = state.saved[state.caregiver] ? 'Saved' : 'Draft';
-      $('#save-status').textContent = state.saved[state.caregiver] ? 'Your part is saved · nothing sent to family' : 'Nothing sent to the family';
+      const savedView = state.saved[state.caregiver] && !editing;
+      $('#draft-status').textContent = editing ? 'Editing my entries' : savedView ? 'Saved' : 'Draft';
+      $('#save-status').textContent = savedView ? 'Your part is saved. Nothing has been sent to the family.' : 'Nothing sent to the family';
+      $('#save-part').innerHTML = `${savedView ? 'Edit my entries' : editing ? 'Save changes' : 'Save my part'} <span aria-hidden="true">→</span>`;
+      $('#review-link').hidden = state.caregiver !== 'jane';
       $('#care-date').value = state.date;
       $('.date-line label').textContent = formattedDate(state.date);
       const handover = state.caregiver === 'jane' && state.saved.anna;
-      $('#shift-message').hidden = !handover;
-      $('#shift-message').textContent = 'Anna’s part is saved. Review her entries below and record the remaining care for your shift.';
+      $('#shift-message').hidden = !handover && !savedView;
+      $('#shift-message').textContent = savedView ? `${person().first}’s completed part. Each entry below shows who recorded it.` : 'Anna’s part is saved. Her entries are shown below. Record dinner, PM medication, bathing and grooming during your shift.';
+      $('.routine-section>.section-helper').textContent = savedView ? 'Your saved observations for Margaret’s day.' : 'Record each thing you observed.';
+      $('.changes-section>.section-helper').textContent = canEdit('concerns') ? 'Usually none. Choose what you observed.' : 'Usually none';
+      $('[data-detail="appetite"]').hidden = !mealKeys.some(canEdit);
+      $('.add-moment').hidden = !canEdit('note');
+      $('#saved-moment').hidden = canEdit('note') || (!state.note && !state.photo);
+      $('#saved-moment').innerHTML = `<span class="eyebrow">A MOMENT FROM TODAY</span><p>${escape(state.note)}</p>${authorHTML('note')}${state.photo && /^data:image\//.test(state.photo) ? `<img src="${escape(state.photo)}" alt="Photo recorded for today’s update">` : ''}`;
+      $('#later-observations').innerHTML = state.observations.map((item, index) => observationHTML(item) + (item.caregiver === state.caregiver && !savedView ? `<button class="text-button" data-edit-observation="${index}">Edit my observation</button>` : '')).join('');
+      $('#add-observation').hidden = !handover || savedView;
       $('.add-moment strong').textContent = state.note || state.photo ? 'A moment, ready to share' : 'A moment to share?';
       $('.add-moment>span:nth-child(2)>span').textContent = state.note || state.photo ? `${byline('note')} · tap to review` : 'Add a photo or a little note';
       updateIdentity();
@@ -96,6 +117,7 @@
       const answer = event.target.closest('[data-answer-kind]');
       if (!answer) return;
       const { item: key, answer: value, answerKind: kind } = answer.dataset;
+      if (!canEdit(key)) return;
       if (kind === 'meal') {
         if (value === 'less') { currentMeal = key; openDetail('appetite', answer); return; }
         state.care[key] = value === 'well';
@@ -106,21 +128,24 @@
       } else state.personal[key] = value;
       persist(); updateCare();
       if (kind === 'medication' && value !== 'given') { currentDose = key; openDetail('medication', answer); }
-      if (kind === 'personal' && value !== 'Done') { currentPersonal = key; openDetail('personalCare', answer); }
+      if (kind === 'personal' && !['Done','Bath','Shower'].includes(value)) { currentPersonal = key; openDetail('personalCare', answer); }
     });
     $$('[data-mood]').forEach(button => button.addEventListener('click', () => {
+      if (!canEdit('mood')) return;
       state.mood = button.dataset.mood;
       if (['Withdrawn','Anxious','Agitated'].includes(state.mood)) state.changes.mood = { ...(state.changes.mood || {}), status: state.mood }; else delete state.changes.mood;
       persist(); updateCare();
       if (state.changes.mood) openDetail('mood', button);
     }));
     $$('[data-sleep]').forEach(button => button.addEventListener('click', () => {
+      if (!canEdit('sleep')) return;
       state.sleep = button.dataset.sleep;
       if (state.sleep === 'As usual') delete state.changes.sleep; else state.changes.sleep = { ...(state.changes.sleep || {}), status: state.sleep };
       persist(); updateCare();
       if (state.sleep !== 'As usual') openDetail('sleep', button);
     }));
     $$('[data-concern]').forEach(button => button.addEventListener('click', () => {
+      if (!canEdit('concerns')) return;
       const type = button.dataset.concern;
       if (type === 'none') { concernKeys.forEach(key => delete state.changes[key]); state.concernsChecked = true; persist(); updateCare(); return; }
       if (!state.changes[type]) state.changes[type] = {};
@@ -130,31 +155,50 @@
     $('#care-date').addEventListener('change', event => {
       if (!event.target.value) { event.target.value = state.date; return; }
       const next = D.fresh(event.target.value); next.caregiver = state.caregiver; next.phase = state.phase;
-      D.replace(next); state = D.state; updateCare(); toast('A fresh entry for this date.');
+      D.replace(next); state = D.state; editing = false; updateCare(); toast('A fresh entry for this date.');
     });
     $('#save-part').addEventListener('click', () => {
+      if (state.saved[state.caregiver] && !editing) {
+        editing = true; updateCare();
+        const first = $('.care-item button, .answer-choices:not([hidden]) button');
+        first?.focus(); return;
+      }
       if (!persist()) { toast('This browser could not save your part. Keep this page open.'); return; }
       state.saved[state.caregiver] = true;
       if (state.caregiver === 'anna') state.phase = 'handover';
       if (!persist()) { state.saved[state.caregiver] = false; toast('Your part could not be saved. Keep this page open.'); return; }
+      editing = false;
       updateCare();
+      showSaved();
+    });
+    function showSaved() {
       $('#shift-body').innerHTML = `<span class="art art-sun" aria-hidden="true"></span><p class="eyebrow">SAVED FOR THE NEXT CAREGIVER</p><h1 id="shift-title">Your part is saved.</h1><p>${person().first}’s entries are part of Margaret’s day.</p><p><strong>Nothing has been sent to the family.</strong></p>${state.caregiver === 'anna' ? '<button class="primary-button" data-caregiver="jane">Continue to Jane’s shift <span>→</span></button>' : `<a class="primary-button" href="review.html">Review the whole day <span>→</span></a>`}<button class="secondary-action" data-action="close-shift">Back to the day</button>`;
       $('#shift-dialog').showModal();
-    });
+    }
     const textarea = (value, label = 'A little context') => `<div class="field-group"><label class="field-label" for="detail-note">${label}<span class="optional-label">OPTIONAL</span></label><textarea id="detail-note" name="note" rows="3" maxlength="400" placeholder="Just a sentence or two…">${escape(value)}</textarea><div class="textarea-footer"><span id="character-count">${value.length}</span> / 400</div></div>`;
     const segment = (name, options, value) => `<div class="segmented-control">${options.map(option => `<label><input type="radio" name="${name}" value="${escape(option)}" ${value === option ? 'checked' : ''}><span>${escape(option)}</span></label>`).join('')}</div>`;
+    const detailKey = type => type === 'appetite' ? currentMeal : type === 'medication' ? currentDose : type === 'personalCare' ? currentPersonal : concernKeys.includes(type) ? 'concerns' : type;
     function openDetail(type, trigger) {
-      if (!(type in detailNames) && type !== 'note') return;
+      if (!(type in detailNames) && !['note','observation'].includes(type)) return;
+      if (type === 'appetite' && !canEdit(currentMeal)) currentMeal = mealKeys.find(canEdit) || currentMeal;
+      if (type === 'medication') currentDose = trigger?.dataset.dose || currentDose;
+      if (type !== 'observation' && !canEdit(detailKey(type))) { toast('This entry belongs to its recorded caregiver.'); return; }
+      if (type === 'observation' && state.saved[state.caregiver] && !editing) return;
       opener = trigger || document.activeElement;
       currentDetail = type;
-      if (type === 'medication') currentDose = trigger?.dataset.dose || currentDose;
       const change = type === 'appetite' ? (state.mealDetails[currentMeal] || {}) : type === 'personalCare' ? (state.changes[currentPersonal] || {}) : (state.changes[type] || {});
       const saveButton = $('#detail-form>.primary-button');
       saveButton.hidden = false;
-      if (type === 'appetite') {
+      saveButton.innerHTML = `${type === 'observation' ? 'Save my observation' : 'Save this detail'} <span aria-hidden="true">→</span>`;
+      if (type === 'observation') {
+        const item = state.observations[observationIndex] || {};
+        detailBody.innerHTML = `<h1 id="detail-title">Later in the day.</h1><p class="detail-description">Add what you observed during your shift. Earlier entries stay with their caregiver.</p><div class="field-group"><label class="field-label" for="observation-category">What did you observe?</label><select id="observation-category" name="category">${['Mood','Sleep','Concerns'].map(value => `<option ${item.category === value ? 'selected' : ''}>${value}</option>`).join('')}</select></div>${textarea(item.note || '', 'Your observation')}<label class="observation-difference"><input type="checkbox" name="different" ${item.different ? 'checked' : ''}> This was different from Margaret’s usual day</label>`;
+        $('#detail-note').required = true;
+        $('.optional-label', detailBody).remove();
+      } else if (type === 'appetite') {
         const meal = currentMeal[0].toUpperCase() + currentMeal.slice(1);
         const portion = change.portion || '';
-        detailBody.innerHTML = `<span class="art art-meal detail-art" aria-hidden="true"></span><h1 id="detail-title">A change in appetite?</h1><p class="detail-description">Choose the meal and amount. Add context if it helps.</p><div class="field-group"><span class="field-label" id="meal-label">Which meal?</span><div role="group" aria-labelledby="meal-label">${segment('meal', ['Breakfast', 'Lunch', 'Dinner'], meal)}</div></div><div class="field-group"><span class="field-label" id="portion-label">How much did she eat?</span><div class="portion-options" role="group" aria-labelledby="portion-label">${[['None','0%'],['A little','25%'],['Half','50%'],['Most','75%']].map(([label, value]) => `<label class="portion-option"><input type="radio" name="portion" value="${label}" ${portion === label ? 'checked' : ''}><span class="plate" style="--portion:${value}" aria-hidden="true"></span><span>${label}</span></label>`).join('')}</div></div>${textarea(change.note || '')}<div class="detail-info"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11.5V12a8 8 0 1 1-4.7-7.3M20 4l-8 8-3-3"/></svg><span>This will appear in the family update.</span></div>`;
+        detailBody.innerHTML = `<span class="art art-meal detail-art" aria-hidden="true"></span><h1 id="detail-title">A change in appetite?</h1><p class="detail-description">Choose the meal and amount. Add context if it helps.</p><div class="field-group"><span class="field-label" id="meal-label">Which meal?</span><div role="group" aria-labelledby="meal-label">${segment('meal', mealKeys.filter(canEdit).map(key => D.labels[key]), meal)}</div></div><div class="field-group"><span class="field-label" id="portion-label">How much did she eat?</span><div class="portion-options" role="group" aria-labelledby="portion-label">${[['None','0%'],['A little','25%'],['Half','50%'],['Most','75%']].map(([label, value]) => `<label class="portion-option"><input type="radio" name="portion" value="${label}" ${portion === label ? 'checked' : ''}><span class="plate" style="--portion:${value}" aria-hidden="true"></span><span>${label}</span></label>`).join('')}</div></div>${textarea(change.note || '')}<div class="detail-info"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11.5V12a8 8 0 1 1-4.7-7.3M20 4l-8 8-3-3"/></svg><span>This will appear in the family update.</span></div>`;
       } else if (type === 'medication') {
         const status = state.care[currentDose];
         detailBody.innerHTML = `<span class="art art-medication detail-art" aria-hidden="true"></span><h1 id="detail-title">${currentDose.toUpperCase()} medication</h1><p class="detail-description">${status ? `${escape(status[0].toUpperCase() + status.slice(1))} recorded. Add a short note if needed.` : 'Choose given, not given, or refused on the daily screen first.'}</p>${textarea(state.medicationDetails[currentDose] || '', 'What happened?')}`;
@@ -178,14 +222,22 @@
       $('.close-button').focus({ preventScroll: true });
     }
     document.addEventListener('click', event => {
+      const editObservation = event.target.closest('[data-edit-observation]');
+      if (editObservation) {
+        observationIndex = Number(editObservation.dataset.editObservation);
+        if (state.observations[observationIndex]?.caregiver === state.caregiver) openDetail('observation', editObservation);
+      }
+      if (event.target.closest('#add-observation')) { observationIndex = -1; openDetail('observation', event.target.closest('#add-observation')); }
       const trigger = event.target.closest('[data-detail]');
       if (trigger) openDetail(trigger.dataset.detail, trigger);
       if (event.target.closest('[data-action="remove-detail"]')) {
+        if (!canEdit(detailKey(currentDetail))) return;
         if (currentDetail === 'medication') { state.care[currentDose] = null; delete state.medicationDetails[currentDose]; }
+        else if (currentDetail === 'personalCare') { state.personal[currentPersonal] = ''; delete state.changes[currentPersonal]; }
         else { delete state.changes[currentDetail]; if (currentDetail === 'sleep') state.sleep = ''; if (concernKeys.includes(currentDetail) && !concernKeys.some(key => state.changes[key])) state.concernsChecked = false; }
         persist(); updateCare(); closeDetail(); toast('Answer cleared.');
       }
-      if (event.target.closest('[data-action="remove-photo"]')) { state.photo = ''; persist(); openDetail('note'); toast('Photo removed.'); }
+      if (event.target.closest('[data-action="remove-photo"]') && canEdit('note')) { state.photo = ''; persist(); openDetail('note'); toast('Photo removed.'); }
     });
     function closeDetail() {
       dialog.close();
@@ -200,7 +252,13 @@
       event.preventDefault();
       const form = new FormData(event.currentTarget);
       const values = Object.fromEntries([...form.entries()].filter(([, value]) => typeof value === 'string'));
-      if (currentDetail === 'note') {
+      if (currentDetail !== 'observation' && !canEdit(detailKey(currentDetail))) return;
+      if (currentDetail === 'observation') {
+        if (!values.note?.trim()) { toast('Add what you observed.'); return; }
+        const item = { category: values.category, note: values.note.trim(), different: Boolean(values.different), caregiver: state.caregiver };
+        if (observationIndex < 0) state.observations.push(item);
+        else if (state.observations[observationIndex]?.caregiver === state.caregiver) state.observations[observationIndex] = item;
+      } else if (currentDetail === 'note') {
         state.note = (values.note || '').trim();
         const file = $('#moment-photo').files[0];
         if (file) {
@@ -217,12 +275,13 @@
         if (currentDetail === 'appetite' && (!values.meal || !values.portion)) { toast('Choose a meal and how much she ate.'); return; }
         if (currentDetail === 'appetite') {
           const meal = values.meal.toLowerCase();
+          if (!mealKeys.includes(meal) || !canEdit(meal)) return;
           state.mealDetails[meal] = { portion: values.portion, note: values.note || '' };
           state.care[meal] = values.portion !== 'None';
-          if (state.changes.appetite) state.changes.appetite = { note: values.note || '' };
+          if (state.changes.appetite && canEdit('concerns')) state.changes.appetite = { note: values.note || '' };
         } else if (currentDetail === 'personalCare') state.changes[currentPersonal] = values;
         else state.changes[currentDetail] = values;
-        if (concernKeys.includes(currentDetail)) state.concernsChecked = true;
+        if (concernKeys.includes(currentDetail) && canEdit('concerns')) state.concernsChecked = true;
 
       }
       persist(); updateCare(); closeDetail(); toast(currentDetail === 'note' ? 'Your moment is ready to share.' : 'A little context, added.');
@@ -231,9 +290,10 @@
     if (params.has('detail')) openDetail(params.get('detail'));
     if (params.has('focus')) {
       const key = params.get('focus');
+      if (D.keys.includes(key) && D.canEdit(key)) { editing = true; updateCare(); }
       requestAnimationFrame(() => (document.getElementById(`item-${key}`) || document.getElementById(`${key}-title`))?.scrollIntoView({ block: 'center' }));
     }
-    if (params.get('stage') === 'saved') $('#save-part').click();
+    if (params.get('stage') === 'saved') showSaved();
   }
 
   function progressHTML(final = false) {
@@ -242,7 +302,7 @@
     return `<strong>${count}/10 recorded</strong><span class="different-count">${D.changes().length} different</span><span>${missing} ${final ? 'not recorded' : 'to record'}</span>`;
   }
   function changeHTML() {
-    return D.changes().map(item => `<div class="change-summary"><div><strong>${escape(item.title)}</strong></div>${item.note ? `<p>${escape(item.note)}</p>` : ''}${authorHTML(item.key)}</div>`).join('') || '<p class="no-changes">No differences noted in the recorded care.</p>';
+    return D.changes().map(item => `<div class="change-summary"><div><strong>${escape(item.title)}</strong></div>${item.note ? `<p>${escape(item.note)}</p>` : ''}${item.caregiver ? `<span class="byline">Recorded by ${escape(D.people[item.caregiver]?.first || '')}</span>` : authorHTML(item.key)}</div>`).join('') || '<p class="no-changes">No differences noted in the recorded care.</p>';
   }
   function showMoment() {
     $('#review-note').textContent = state.note;
@@ -270,6 +330,11 @@
     $('#summary-sleep').classList.toggle('unrecorded', !state.sleep);
     $('#summary-concerns').innerHTML = escape(D.status('concerns')) + authorHTML('concerns');
     $('#review-changes').innerHTML = changeHTML();
+    const laterNotes = state.observations.filter(item => !item.different);
+    if (laterNotes.length) $('.changes-review').insertAdjacentHTML('afterend', `<section class="review-section"><div class="section-heading"><h2>Later observations</h2></div>${laterNotes.map(observationHTML).join('')}</section>`);
+    $('.care-review .text-button').textContent = 'My entries';
+    $('.sleep-review .text-button').hidden = !D.canEdit('sleep');
+    $('.changes-review .text-button').hidden = !D.canEdit('concerns');
     showMoment();
     const missing = D.keys.filter(key => !D.recorded(key) && (finalShift || !D.later(key)));
     $('#missing-items').hidden = !missing.length;
@@ -284,7 +349,7 @@
       const selected = $$('input[name="recipient"]:checked');
       const accepted = !missing.length || $('#send-unrecorded').checked;
       $('#send-update').disabled = !selected.length || !accepted;
-      $('#send-update').innerHTML = `${missing.length && accepted ? 'Send with not recorded' : 'Send to family'} <span aria-hidden="true">↗</span>`;
+      $('#send-update').innerHTML = `Send daily update <span aria-hidden="true">↗</span>`;
       $('.send-hint').textContent = !selected.length ? 'Choose at least one family member.' : !accepted ? 'Complete missing items or send them marked not recorded.' : 'One update, with care from ' + D.list(D.caregivers());
     }
     $$('input[name="recipient"]').forEach(input => input.addEventListener('change', updateRecipients));
@@ -314,17 +379,21 @@
     const sentences = [];
     if (allWell) sentences.push('Margaret ate well at breakfast, lunch and dinner.');
     else recordedMeals.forEach(key => sentences.push(`${D.labels[key]}: ${D.status(key).toLowerCase()}.`));
-    if (state.mood) sentences.push(`She appeared ${state.mood.toLowerCase()} today.`);
+    if (state.mood) sentences.push(`${D.people[state.by.mood]?.first || 'Her caregiver'} recorded that she appeared ${state.mood.toLowerCase()}.`);
     if (state.care.am === 'given' && state.care.pm === 'given') sentences.push('Her morning and evening medication were given.');
     else doseKeys.filter(D.recorded).forEach(key => {
       const period = key === 'am' ? 'morning' : 'evening';
       sentences.push(state.care[key] === 'refused' ? `She refused her ${period} medication.` : `Her ${period} medication was ${state.care[key]}.`);
     });
-    if (state.personal.shower === 'Done' && state.personal.grooming === 'Done') sentences.push('She had a shower and grooming.');
-    else ['shower','grooming'].filter(D.recorded).forEach(key => sentences.push(state.personal[key] === 'Done' ? `She had ${key === 'shower' ? 'a shower' : 'grooming'}.` : state.personal[key] === 'Declined' ? `She declined ${key === 'shower' ? 'a shower' : 'grooming'}.` : `${D.labels[key]} was not done.`));
+    const bathing = state.personal.shower;
+    if (['Bath','Shower','Done'].includes(bathing)) sentences.push(`${D.people[state.by.shower]?.first || 'Her caregiver'} helped Margaret with ${bathing === 'Bath' ? 'a bath' : bathing === 'Shower' ? 'a shower' : 'bathing'}.`);
+    else if (bathing) sentences.push(bathing === 'Declined' ? 'She declined bathing.' : 'Bathing was not done.');
+    if (state.personal.grooming) sentences.push(state.personal.grooming === 'Done' ? 'Her grooming was completed.' : state.personal.grooming === 'Declined' ? 'She declined grooming.' : 'Grooming was not done.');
     if (state.sleep === 'As usual') sentences.push('Sleep was recorded as usual.');
     if (state.concernsChecked && !concernKeys.some(key => state.changes[key])) sentences.push('No other concerns were recorded.');
     $('#family-day').textContent = sentences.join(' ');
+    const laterNotes = state.observations.filter(item => !item.different);
+    if (laterNotes.length) $('#family-day').insertAdjacentHTML('afterend', laterNotes.map(observationHTML).join(''));
     const missing = D.keys.filter(key => !D.recorded(key));
     $('#family-gaps').hidden = !missing.length;
     $('#family-gaps-list').textContent = D.list(missing.map(key => D.labels[key])) + (missing.length === 1 ? ' was' : ' were') + ' not recorded today.';

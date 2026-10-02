@@ -18,23 +18,24 @@ You can also open `dist/index.html` directly. Local file security varies by brow
 
 ## Shared caregiver flow
 
-The original design is preserved. Use the menu to switch between Anna Lewis (morning) and Jane Doe (final shift). A fresh day has no answers selected. Every item's choices remain open for both caregivers. Completed answers stay selected and show who recorded them, with no extra Record now or Review tap. Shower and grooming are separate items.
+The original design is preserved. Use the menu to switch between Anna Lewis (morning) and Jane Doe (final shift). A fresh day has no answers selected. Unanswered choices are open. Saving turns the caregiver's part into information, with one Edit my entries action for its author. Another caregiver sees those entries without editing controls and completes the remaining care. Bathing and grooming are separate items.
 
-1. Anna records observed care. Lunch, dinner and PM medication initially show Later today.
-2. Save my part stores her contribution and confirms that nothing has been sent.
-3. Continue to Jane's shift to see the same day and the remaining choices.
-4. Jane reviews all recorded care and either completes gaps or explicitly includes them as not recorded.
-5. The simulated send opens a family update built from those exact entries, including the recorded moment and caregiver names.
+1. Anna records breakfast, lunch, AM medication, calm mood, restless sleep and a personal moment. Lunch and evening care initially show Later today.
+2. Save my part confirms nothing has been sent. Anna's completed part has plain summaries and Edit my entries; editing changes the action to Save changes.
+3. Jane sees Anna's entries as information and records dinner, PM medication, a bath and grooming. Later observations can be added under Jane's name without changing Anna's answers.
+4. Jane reviews the combined day and sends one daily update to Sophie (daughter) and James (son).
+5. The simulated family update leads with the recorded moment and includes the sleep note, care and both caregiver names.
+6. A clearly labelled alternative leaves grooming unrecorded. Jane can complete it or send it explicitly marked not recorded, which also appears in the family update.
 
 ## Matching example screens
 
 - `/care.html?stage=morning` - breakfast recorded by Anna; observations open.
-- `/care.html?stage=anna-end` - Anna's completed part, including restless sleep and her personal note.
+- `/care.html?stage=anna-end` - Anna's saved part as information, with Edit my entries.
 - `/care.html?stage=saved` - Save my part confirmation.
-- `/care.html?stage=handover` - Jane's shift, with dinner and PM medication open.
+- `/care.html?stage=handover` - Jane's shift, with dinner, PM medication, bathing and grooming open; Anna's entries are read-only.
 - `/review.html?stage=final` - the whole completed day.
 - `/family.html?stage=family` - the matching family update.
-- `/review.html?stage=gap` and `/family.html?stage=family-gap` - a clearly labelled alternative with PM medication not recorded.
+- `/review.html?stage=gap` and `/family.html?stage=family-gap` - a clearly labelled alternative with grooming not recorded.
 
 Explicit stage links reset the example to that point. Ordinary app navigation carries the actual edited record forward. The all-screens page presents the complete journey.
 
@@ -44,9 +45,9 @@ The updated individual screenshots are `01-morning.png`, `02-anna-end.png`, `03-
 
 The current combined exports are `DailyCare-client-presentation.png` and `DailyCare-complete-presentation.png`. Editable boards are `/client-presentation.html` and `/complete-presentation.html`. Their existing visual layouts are preserved, with new screenshots and explanations.
 
-With the local server running, `node .capture-tools/capture.cjs` runs the actual Anna-to-Jane flow and captures its screens. `node .capture-tools/export-complete.cjs` exports both presentation boards. Browser export dependencies are isolated in `.capture-tools/node_modules/`.
+With the local server running, `node .capture-tools/capture.cjs` runs the actual Anna-to-Jane flow and captures its screens. `node .capture-tools/refresh-presentations.cjs` aligns the presentation copy, and `node .capture-tools/export-complete.cjs` exports both presentation boards. Browser export dependencies are isolated in `.capture-tools/node_modules/`.
 
-Run `npm run check` for JavaScript syntax validation. The flow check covers caregiver attribution, reviewing prior answers without re-recording, scheduled versus missing items, recording gaps, completion links and the matching family update.
+Run `npm run check` for JavaScript syntax validation. The flow check covers saved summaries, editing only one's own entries, read-only handover, scheduled versus missing items, bathing, the grooming gap, later observations, completion links and matching family updates.
 
 ## Prototype limits
 
