@@ -60,6 +60,15 @@
 .saved-moment>img{display:block;max-width:100%;border-radius:12px;margin-top:12px}
 .later-observation{padding:16px 0;border-bottom:1px solid var(--line);font-size:14px;line-height:1.6}
 .later-observation .answer-note{font-size:14px}
+.mood-section #later-mood-observations{margin-top:12px}
+.mood-section #later-mood-observations:empty{margin:0}
+.mood-section .add-observation{margin:12px 0 0}
+.later-mood-options{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px;margin-top:12px}
+.later-mood-options label{position:relative;display:flex;flex-direction:column;align-items:center;gap:7px;min-width:0;padding:7px 0;font-size:11px;color:#52604d;cursor:pointer}
+.later-mood-options .mood-face{width:42px;height:42px}
+.later-mood-options input{position:absolute;inset:0;z-index:1;opacity:0;cursor:pointer}
+.later-mood-options label:has(input:checked) .mood-face{outline:2px solid var(--olive);outline-offset:3px}
+.later-mood-options label:has(input:focus-visible) .mood-face{outline:3px solid #947c48;outline-offset:3px}
 .add-observation{margin-top:14px;font-size:13px;min-height:40px}
 .observation-difference{display:flex;align-items:flex-start;gap:9px;font-size:14px;line-height:1.6;margin:14px 0}
 .observation-difference input{margin-top:5px;accent-color:var(--olive)}

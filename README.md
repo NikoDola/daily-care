@@ -22,9 +22,9 @@ The original design is preserved. Use the menu to switch between Anna Lewis (mor
 
 1. Anna records breakfast, AM medication, calm mood, restless sleep with a note, and no concerns on the morning screen. Lunch and evening care show Later today. After lunch, Anna records lunch and a personal moment.
 2. Save my part confirms nothing has been sent. Anna's completed part has plain summaries and Edit my entries; editing changes the action to Save changes.
-3. Jane sees Anna's entries as information and records dinner, PM medication, a bath and grooming. Later observations can be added under Jane's name without changing Anna's answers.
+3. Jane sees Anna's entries as information. In Mood, Add a later mood observation lets her record Cheerful after Anna's Calm, using the same five mood choices. She also records dinner, PM medication, a bath and grooming. Anna's answer keeps her name.
 4. Jane reviews the combined day and sends one daily update to Sophie (daughter) and James (son).
-5. The simulated family update leads with the recorded moment and includes the sleep note, care and both caregiver names.
+5. The simulated family update leads with the recorded moment, then includes Anna's morning Calm, Jane's later Cheerful, the sleep note, care and both caregiver names.
 6. A clearly labelled alternative leaves grooming unrecorded. Jane can complete it or send it explicitly marked not recorded, which also appears in the family update.
 
 ## Matching example screens

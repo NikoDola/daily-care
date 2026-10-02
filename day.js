@@ -32,6 +32,7 @@
     s.care.dinner = true; s.by.dinner = 'jane';
     s.care.pm = 'given'; s.by.pm = 'jane';
     s.personal.shower = 'Bath'; s.by.shower = 'jane';
+    s.observations.push({ category: 'Mood', status: 'Cheerful', note: 'Margaret smiled and chatted with Jane after her bath.', caregiver: 'jane', different: true });
     if (!['gap', 'family-gap'].includes(stage)) { s.personal.grooming = 'Done'; s.by.grooming = 'jane'; }
     s.saved.jane = true;
     if (stage.startsWith('family')) s.sent = { recipients: ['Sophie', 'James'], gaps: stage === 'family-gap' ? ['grooming'] : [] };
@@ -88,7 +89,7 @@
     if (state.mood && !['Calm', 'Cheerful'].includes(state.mood)) result.push({ key: 'mood', title: 'Mood · ' + state.mood.toLowerCase(), note: state.changes.mood?.note || '' });
     if (state.sleep && state.sleep !== 'As usual') result.push({ key: 'sleep', title: 'Sleep · ' + state.sleep.toLowerCase(), note: state.changes.sleep?.note || '' });
     concernKeys.forEach(key => { if (state.changes[key]) result.push({ key: 'concerns', title: concernNames[key] + (state.changes[key].status ? ' · ' + state.changes[key].status.toLowerCase() : ''), note: state.changes[key].note || '' }); });
-    state.observations.filter(item => item.different).forEach(item => result.push({ title: item.category + ' · later observation', note: item.note, caregiver: item.caregiver }));
+    state.observations.filter(item => item.different).forEach(item => result.push({ title: item.category === 'Mood' && item.status ? `Mood · ${item.status.toLowerCase()} later` : item.category + ' · later observation', note: item.note, caregiver: item.caregiver }));
     return result;
   }
   const list = items => new Intl.ListFormat('en', { style: 'long', type: 'conjunction' }).format(items);
