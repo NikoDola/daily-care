@@ -1,0 +1,58 @@
+/* Small additions to the original DailyCare components. */
+.caregiver-line{font-size:.75rem;color:#52604d;margin-top:4px}
+.menu-caregiver{display:flex;align-items:center;gap:11px;padding:16px 9px 8px;border-top:1px solid var(--line);margin-top:12px}
+.menu-caregiver .avatar{width:39px;height:39px;background:#e8e6dc;font-size:13px}
+.menu-caregiver>div{display:flex;flex-direction:column;gap:3px;font-size:14px}
+.menu-caregiver .micro-label{font-size:10px}
+.menu-shift{font-size:12px;color:#52604d;padding:0 9px 4px 59px}
+.mobile-menu .switch-caregiver{font-size:12px;color:#52604d;text-decoration:underline;padding:8px 9px 8px 59px;text-align:left}
+.day-progress{display:flex;gap:7px 13px;flex-wrap:wrap;padding:12px 0;border-bottom:1px solid var(--line);font-size:12px;line-height:1.5;color:#52604d}
+.day-progress strong{color:var(--ink);font-weight:600}
+.day-progress .different-count{color:#795724}
+.shift-message{font-size:13px;line-height:1.6;color:#52604d;padding:12px 0 0}
+.care-row:has(.care-items){align-items:flex-start}
+.care-row:has(.care-items)>.art{margin-top:14px}
+.care-item{padding:10px 0;border-top:1px solid var(--line)}
+.care-item:first-child{border-top:0;padding-top:3px}
+.care-item-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:13px;line-height:1.5;margin-bottom:7px}
+.care-item-heading strong{font-weight:550}
+.care-item .decision-options{display:flex;flex-wrap:wrap;margin-top:0;gap:5px}
+.care-item .decision-options button{font-size:12px;min-height:35px;padding:7px 9px}
+.recorded-answer{display:flex;align-items:center;gap:9px;justify-content:space-between;font-size:13px;line-height:1.5;margin-top:10px}
+.care-item .recorded-answer{margin-top:0}
+.recorded-answer>div{min-width:0;flex:1}
+.recorded-answer strong{font-weight:550;display:block}
+.recorded-answer .byline,.byline{display:block;font-size:12px;color:#52604d;margin-top:3px;font-weight:400;line-height:1.5}
+.recorded-answer .text-button{font-size:12px;min-height:36px;padding:3px 0}
+.recorded-answer .mood-face{flex-shrink:0}
+.recorded-answer .mood-face svg{width:32px;height:32px}
+.later-label{font-size:12px;color:#52604d}
+.later-row{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.later-row .text-button{font-size:12px}
+.answer-note{font-size:12px;line-height:1.6;color:#52604d;margin-top:5px;white-space:pre-line}
+.close-answer{font-size:12px;color:#52604d;text-decoration:underline;margin-top:10px;min-height:30px}
+.save-status{font-size:12px;line-height:1.5;color:#52604d;margin:8px 0;text-align:center}
+.shift-footer .footer-meta{margin-bottom:5px}
+.shift-footer .secondary-review{display:block;text-align:center;font-size:12px;text-decoration:underline;margin:8px auto 0}
+.app-shell:has(.shift-footer){padding-bottom:180px}
+.shift-dialog .choice-person{display:flex;width:100%;gap:12px;align-items:center;border:1px solid var(--line);border-radius:8px;padding:14px;margin:12px 0;text-align:left}
+.choice-person>span:last-child{display:flex;flex-direction:column;gap:3px}
+.choice-person small{font-size:12px;color:#52604d}
+.shift-dialog .secondary-action{display:block;margin:13px auto 0;font-size:14px;text-decoration:underline;padding:10px}
+.shift-dialog .primary-button{margin-top:20px}
+.review-item .byline{font-size:11px}
+.review-item>span{min-width:0}
+.review-item strong{flex-shrink:0;max-width:50%}
+.review-progress{margin:0 0 5px}
+.missing-items li a{text-decoration:underline;font-weight:500}
+.review-phase{font-size:12px;line-height:1.6;color:#52604d;padding-top:10px}
+.moment-review .byline{margin:10px 0 0}
+.family-content .moment-review{margin-top:0}
+.family-content .review-section{padding:22px 0}
+.family-content .family-copy{font-size:15px;line-height:1.8;margin-top:12px;color:var(--ink);white-space:pre-line}
+.family-signoff{border-top:1px solid var(--line);padding:24px 0;font-family:var(--font-display);font-size:16px;line-height:1.8}
+.family-signoff span{display:block;font-family:var(--font-body);font-size:13px;margin-top:8px}
+.family-content .missing-items{margin-bottom:20px}
+.family-content .family-empty{font-size:15px;line-height:1.7;padding:20px 0}
+.family-header .brand{font-size:23px}
+@media(max-width:360px){.care-item .decision-options button{padding:6px;font-size:11px}.day-progress{gap:5px 10px}.caregiver-line{font-size:11px}}

@@ -1,5 +1,19 @@
 # DailyCare design direction
 
+## Shared shifts, preserving the approved design
+
+This iteration starts from `eca19a6`. The original stylesheet, warm colors, fonts, textured artwork, five mood faces and their order are preserved. New states use the same rows, separators, controls and detail sheets.
+
+The caregiver remains visible beneath Margaret's name because identity matters while recording. The menu repeats the role, full name and initials avatar; there is no logout item. Anna Lewis records the morning and Jane Doe completes the final shift.
+
+Each answer has an author. Answered items collapse into a short summary and can be reviewed without changing that author. The morning schedule treats lunch, dinner and evening medication as later today; Jane's final shift makes any unanswered items due. Shower and grooming have separate answers. A compact progress line counts recorded items, differences, unanswered care and later care.
+
+“Save my part” explicitly says nothing has been sent. Jane reviews the combined day before preparing one family update. A recording gap requires a return to the specific item or an explicit choice to send it as “not recorded.” The family view begins with the saved personal moment, follows with changes and gaps, and names the caregivers who recorded care.
+
+The screenshots follow one actual interactive session: Anna records good breakfast and lunch, calm mood, restless sleep with a reassurance note, shower and grooming, and a conversation about roses. Jane records dinner and evening medication. A clearly labelled alternative leaves evening medication unrecorded, and that same gap appears in its family update. No summary invents unrecorded care or a personal moment.
+
+This remains a local visual prototype. Caregiver switching represents handover in the same browser session; it is not authentication or a shared backend, and sending is simulated.
+
 ## Core decision
 
 Treat the daily update like a small care journal. The ordinary day should feel light. Exceptions deserve more space only when the caregiver asks for it. Open rows and thin separators replace a dashboard of component cards.
@@ -21,7 +35,7 @@ Reference images are research material only and are not used as app artwork. The
 ## Information hierarchy
 
 1. Person, caregiver, and date stay explicit.
-2. Everyday care asks for individual meal answers, a given/not given/refused answer for each medication dose, and a shower-or-grooming personal-care choice. Usual states are context, never preselected answers.
+2. Everyday care asks for individual meal answers, given/not given/refused for medication, and separate shower and grooming answers. Usual states are context, never preselected answers.
 3. Mood, sleep, and concern choices are visible on the daily screen so each can be checked directly.
 4. A changed choice opens a focused sheet for follow-up context, such as the meal, portion, and note for appetite.
 5. The personal note/photo is optional.
