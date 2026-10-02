@@ -90,3 +90,20 @@ dialog{border:0;color:var(--ink);background:var(--paper)}dialog::backdrop{backgr
 .changes-review{margin:25px 0 23px;padding:0;border:0;background:none}.changes-review .section-heading h2{font-size:1.25rem;font-weight:700;color:var(--ink)}.changes-review .text-button{color:#657248}.changes-review .change-summary{padding-left:14px;border-left:3px solid #b45c4a}.changes-review .change-summary strong{color:#56614e}.changes-review .change-summary p{color:#777b6d}.changes-review .no-changes{color:var(--muted)}
 @media(max-width:370px){.personal-care-options .routine-toggle{min-width:82px}.changes-review{margin-left:-6px;margin-right:-6px}}
 .studio,.studio-header{background:#fff}
+
+/* Daily decisions stay visible; sheets add context after a change is chosen. */
+.app-page .mood-section,.app-page .sleep-section{border-bottom:1px solid var(--line);padding:22px 0 20px}
+.app-page .changes-section{padding:22px 0 0}
+.app-page .mood-picker{margin-top:16px}
+.decision-options{display:grid;gap:8px;margin-top:14px}
+.sleep-options{grid-template-columns:repeat(2,minmax(0,1fr))}
+.concern-options{grid-template-columns:repeat(2,minmax(0,1fr))}
+.decision-options button{min-height:46px;text-align:left;padding:10px 12px;border:1px solid #daddcc;border-radius:9px;background:#fffdf7;color:#626b56;font-size:.875rem;line-height:1.3;transition:background var(--duration),border-color var(--duration)}
+.decision-options button[aria-pressed=true]{background:var(--sage);border-color:#a8b48e;color:#465438;font-weight:600}
+.decision-options button[aria-pressed=true]::after{content:'✓';float:right;margin-left:6px;color:#5c714b}
+.decision-options button:hover{border-color:#9da986}
+.decision-options button:focus-visible,.mood-choice:focus-visible{outline:3px solid #947c48;outline-offset:3px}
+.concern-options button:first-child{grid-column:1/-1;text-align:center}
+.sleep-review{margin-top:22px;margin-bottom:0;padding-bottom:16px;border-bottom:1px solid var(--line)}
+.sleep-review p{font-size:.875rem;color:#626b56;margin-top:8px}
+@media(max-width:350px){.decision-options button{font-size:.8125rem;padding:9px 10px}}

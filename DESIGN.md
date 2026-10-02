@@ -22,8 +22,8 @@ Reference images are research material only and are not used as app artwork. The
 
 1. Person, caregiver, and date stay explicit.
 2. Everyday care groups six routines into meals, medication, and a distinct shower-or-grooming personal-care choice.
-3. A single mood choice conveys the feel of the day.
-4. Optional changes open focused detail sheets. Clinical concern names appear only after “Something else.”
+3. Mood, sleep, and concern choices are visible on the daily screen so each can be checked directly.
+4. A changed choice opens a focused sheet for follow-up context, such as the meal, portion, and note for appetite.
 5. The personal note/photo is optional.
 6. Review separates routine completion, notable changes, unrecorded items, and the personal moment.
 7. Family recipients are visible and individually selectable before the simulated send.
@@ -37,7 +37,7 @@ The visible system page uses the exact shared CSS classes. CSS tokens at the top
 | Primary action | `.primary-button` | Default, hover, focus-visible, pressed, disabled |
 | Routine toggle | `.routine-toggle` | Unrecorded, recorded (`aria-pressed`), hover, focus |
 | Mood choice | `.mood-choice` | Default, selected (`aria-pressed`), hover, focus |
-| Optional-change trigger | `.change-options`, `[data-detail]` | Collapsed, detail sheet open, saved detail |
+| Daily decision | `.decision-options` | Unrecorded, selected (`aria-pressed`), detail sheet open |
 | Meal selector | `.segmented-control` | Native radio, checked, keyboard focus |
 | Portion selector | `.portion-option` | Native radio, filled-plate quantity, checked, keyboard focus |
 | Detail sheet | `.detail-dialog` | Open/closed, save/cancel, remove saved detail |
