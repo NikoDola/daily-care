@@ -20,7 +20,7 @@ You can also open `dist/index.html` directly. Local file security varies by brow
 
 The original design is preserved. Use the menu to switch between Anna Lewis (morning) and Jane Doe (final shift). A fresh day has no answers selected. Unanswered choices are open. Saving turns the caregiver's part into information, with one Edit my entries action for its author. Another caregiver sees those entries without editing controls and completes the remaining care. Bathing and grooming are separate items.
 
-1. Anna records breakfast, lunch, AM medication, calm mood, restless sleep and a personal moment. Lunch and evening care initially show Later today.
+1. Anna records breakfast, AM medication, calm mood, restless sleep with a note, and no concerns on the morning screen. Lunch and evening care show Later today. After lunch, Anna records lunch and a personal moment.
 2. Save my part confirms nothing has been sent. Anna's completed part has plain summaries and Edit my entries; editing changes the action to Save changes.
 3. Jane sees Anna's entries as information and records dinner, PM medication, a bath and grooming. Later observations can be added under Jane's name without changing Anna's answers.
 4. Jane reviews the combined day and sends one daily update to Sophie (daughter) and James (son).
@@ -29,7 +29,7 @@ The original design is preserved. Use the menu to switch between Anna Lewis (mor
 
 ## Matching example screens
 
-- `/care.html?stage=morning` - breakfast and AM medication recorded by Anna; lunch and later care still open.
+- `/care.html?stage=morning` - breakfast, AM medication, mood, sleep and concerns recorded by Anna; lunch and later care still open.
 - `/care.html?stage=anna-end` - Anna's saved part as information, with Edit my entries.
 - `/care.html?stage=saved` - Save my part confirmation.
 - `/care.html?stage=handover` - Jane's shift, with dinner, PM medication, bathing and grooming open; Anna's entries are read-only.

@@ -17,10 +17,13 @@
     const s = fresh();
     s.care.breakfast = true; s.by.breakfast = 'anna';
     s.care.am = 'given'; s.by.am = 'anna';
+    s.mood = 'Calm'; s.by.mood = 'anna';
+    s.sleep = 'Restless'; s.by.sleep = 'anna';
+    s.changes.sleep = { status: 'Restless', note: 'Woke twice overnight and settled after reassurance.' };
+    s.concernsChecked = true; s.by.concerns = 'anna';
     if (stage === 'morning') return s;
     s.care.lunch = true;
-    Object.assign(s, { mood: 'Calm', sleep: 'Restless', concernsChecked: true, note: 'After lunch, Margaret sat by the window and told Anna about the roses she used to grow.', phase: 'handover' });
-    s.changes.sleep = { status: 'Restless', note: 'Woke twice overnight and settled after reassurance.' };
+    Object.assign(s, { note: 'After lunch, Margaret sat by the window and told Anna about the roses she used to grow.', phase: 'handover' });
     keys.filter(key => recorded(s, key)).concat('note').forEach(key => { s.by[key] = 'anna'; });
     s.saved.anna = true;
     if (['anna-end', 'saved'].includes(stage)) return s;

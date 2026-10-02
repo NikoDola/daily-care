@@ -3,7 +3,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const root = path.resolve(__dirname, '..', 'dist');
 const screens = [
-  ['01-morning', 'Morning recording', 'ANNA’S MORNING SHIFT', 'The day begins with two recorded answers.', 'Anna records breakfast and AM medication as given. Lunch and the evening care are still later today. Unanswered observations show their choices on the main screen.'],
+  ['01-morning', 'Morning recording', 'ANNA’S MORNING SHIFT', 'Record what Anna has observed.', 'Anna records breakfast, AM medication given, calm mood, restless sleep with a note, and no concerns. Lunch and the evening care are still later today.'],
   ['02-anna-end', 'Anna’s completed part', 'SAVED, READY FOR HANDOVER', 'A saved record, ready to read.', 'Anna has saved breakfast, lunch, AM medication, calm mood, restless sleep and a moment about Margaret’s roses. Her answers appear as information. Only Anna can use Edit my entries to change them.'],
   ['03-handover', 'Jane’s handover', 'THE SAME DAY, NEXT SHIFT', 'Pick up where Anna left off.', 'Jane sees Anna’s saved answers without editing controls. Dinner, PM medication, bathing and grooming are open for Jane. A later observation can be added without replacing Anna’s entry.'],
   ['04-final-review', 'Final-shift review', 'JANE REVIEWS THE WHOLE DAY', 'One review, both caregivers.', 'Jane records a good dinner, PM medication given, a bath and grooming. She reviews the whole day, including Anna’s restless sleep note, before sending one daily update to Sophie, Margaret’s daughter, and James, her son.'],
