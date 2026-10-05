@@ -17,6 +17,7 @@ const { chromium } = require('playwright-core');
     assert.equal(await page.locator('.switch-caregiver').count(), 0);
     assert.equal(await page.locator('#resident-name').innerText(), 'Margaret Rose');
     await page.locator('.mobile-menu.app-menu>summary').click();
+    assert.equal(await page.locator('#menu-caregiver').evaluate(element => Boolean(element.compareDocumentPosition(document.querySelector('#menu-resident-switch')) & Node.DOCUMENT_POSITION_FOLLOWING)), true);
     assert.match(await page.locator('#menu-resident-switch').innerText(), /Margaret Rose/);
     assert.match(await page.locator('#menu-resident-switch .resident-photo--margaret').evaluate(element => getComputedStyle(element).backgroundImage), /resident-portraits/);
     assert.equal(await page.locator('.menu-caregiver .caregiver-photo--anna').count(), 1);

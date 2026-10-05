@@ -26,9 +26,10 @@
     const holder = $('#menu-caregiver');
     if (holder) holder.innerHTML = `<div class="menu-caregiver"><span class="avatar ${caregiverPortrait(state.caregiver)}" aria-hidden="true"></span><div><span class="micro-label">SIGNED IN AS</span><strong>${person().name}</strong></div></div><p class="menu-shift">${person().shift}</p>`;
     if (holder) {
+      holder.parentElement.querySelector('.menu-label').insertAdjacentElement('afterend', holder);
       let menuResident = $('#menu-resident-switch');
       if (!menuResident) {
-        holder.parentElement.querySelector('.menu-label').insertAdjacentHTML('afterend', '<button type="button" class="menu-resident-switch" id="menu-resident-switch" aria-haspopup="dialog" aria-controls="resident-dialog"></button>');
+        holder.insertAdjacentHTML('afterend', '<button type="button" class="menu-resident-switch" id="menu-resident-switch" aria-haspopup="dialog" aria-controls="resident-dialog"></button>');
         menuResident = $('#menu-resident-switch');
       }
       menuResident.innerHTML = `<span class="avatar ${portrait(D.residentId)}" aria-hidden="true"></span><span class="menu-resident-details"><span class="micro-label">CARING FOR</span><strong>${escape(resident.name)}</strong><small>Switch resident</small></span><span class="menu-resident-arrow" aria-hidden="true">⌄</span>`;
