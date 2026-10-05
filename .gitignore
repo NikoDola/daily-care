@@ -1,3 +1,5 @@
 .capture-tools/node_modules/
 .capture-tools/*.tar.gz
 DailyCare-client-files.zip
+.next/
+node_modules/

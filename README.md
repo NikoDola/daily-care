@@ -1,67 +1,41 @@
 # DailyCare
 
-A local, screenshot-ready caregiver app prototype based on the client brief. Plain HTML and CSS, local fonts and artwork, and a small vanilla JavaScript file. No dependencies or build step.
+DailyCare is an interactive Next.js prototype for recording a day of care and previewing a family update. The existing design and caregiver flow are served by Next.js App Router pages. The original HTML, CSS, and browser scripts remain the source for the visual prototype; `scripts/sync-public.cjs` copies browser assets into `public/` before each development or production build.
 
-## Open it
+## Run locally
 
-Double-click **Start DailyCare.cmd**, or run `npm run dev` from this folder. No `npm install` is needed. Keep the terminal window open, then open **http://127.0.0.1:4173/care.html** for the phone app, or **http://127.0.0.1:4173** for all six screens.
+Requires Node.js 20.9 or newer.
 
-Press `Ctrl+C` in that terminal when you want to stop the server. `npm start` works too.
+```bash
+npm install
+npm run dev
+```
 
-- `/` — six mobile screen states arranged for a presentation screenshot.
-- `/care.html` — standalone daily care app. Each observation starts unrecorded; save your part for the next caregiver.
-- `/care.html?detail=appetite` — the expanded appetite sheet.
-- `/care.html?sample=1` and `/review.html?sample=1` — the same complete example day, including both caregivers and the personal moment.
-- `/system.html` — implementation-ready design tokens, components, and interaction states.
+Open `http://localhost:3000`. On Windows, `Start DailyCare.cmd` starts the same development server. Run `npm run build` to verify the production build, or `npm run start` after building to preview it.
 
-You can also open `dist/index.html` directly. Local file security varies by browser; use the server for the most reliable preview and draft transfer.
+## Routes
 
-## Shared caregiver flow
+- `/` and `/care.html` — interactive daily care entry.
+- `/review.html` — review and simulated send.
+- `/family.html` — family update preview.
+- `/system.html` — design system.
+- `/experience.html` — six live example screens together.
+- Add `?sample=1` or a `?stage=...` query for the prepared example states.
 
-The original design is preserved. Use the menu to switch between Anna Lewis (morning) and Jane Doe (final shift). A fresh day has no answers selected. Unanswered choices are open. Saving turns the caregiver's part into information, with one Edit my entries action for its author. Another caregiver sees those entries without editing controls and completes the remaining care. Bathing and grooming are separate items.
+The `.html` URLs are retained so existing links and the caregiver flow continue to work. The Next.js pages prerender during the build, while `day.js`, `app.js`, and `menu.js` run in the browser for interactions.
 
-1. Anna records breakfast, AM medication, calm mood, restless sleep with a note, and no concerns on the morning screen. Lunch and evening care show Later today. After lunch, Anna records lunch and a personal moment.
-2. Save my part confirms nothing has been sent. Anna's completed part has plain summaries and Edit my entries; editing changes the action to Save changes.
-3. Jane sees Anna's entries as information. In Mood, Add a later mood observation lets her record Cheerful after Anna's Calm, using the same five mood choices. She also records dinner, PM medication, a bath and grooming. Anna's answer keeps her name.
-4. Jane reviews the combined day and sends one daily update to Sophie (daughter) and James (son).
-5. The simulated family update leads with the recorded moment, then includes Anna's morning Calm, Jane's later Cheerful, the sleep note, care and both caregiver names.
-6. A clearly labelled alternative leaves grooming unrecorded. Jane can complete it or send it explicitly marked not recorded, which also appears in the family update.
+## Deploy to Vercel
 
-## Matching example screens
+Push this folder to GitHub and import it as a project in Vercel. Keep the root directory as this folder and the detected **Next.js** framework preset. Vercel runs `npm run build`; the `prebuild` script prepares the public assets. No environment variables are needed for the prototype.
 
-- `/care.html?stage=morning` - breakfast, AM medication, mood, sleep and concerns recorded by Anna; lunch and later care still open.
-- `/care.html?stage=anna-end` - Anna's saved part as information, with Edit my entries.
-- `/care.html?stage=saved` - Save my part confirmation.
-- `/care.html?stage=handover` - Jane's shift, with dinner, PM medication, bathing and grooming open; Anna's entries are read-only.
-- `/review.html?stage=final` - the whole completed day.
-- `/family.html?stage=family` - the matching family update.
-- `/review.html?stage=gap` and `/family.html?stage=family-gap` - a clearly labelled alternative with grooming not recorded.
+## Current interaction scope
 
-Explicit stage links reset the example to that point. Ordinary app navigation carries the actual edited record forward. The all-screens page presents the complete journey.
+Visitors can record care, switch between the two sample caregivers, save a part, review the day, and see the resulting family update. Data is fictional and stored in browser `sessionStorage`, so it lasts only for that browser session. The send button produces a local preview; it does not deliver a message. A real shared client and caregiver workflow would require authentication, a database, and a delivery service before using real care information.
 
-## Screenshots and presentation
+## Source files
 
-The updated individual screenshots are `01-morning.png`, `02-anna-end.png`, `03-handover.png`, `04-final-review.png`, `05-family-update.png`, `06-caregiver-menu.png`, `07-saved-part.png`, `08-missing-review.png`, `09-family-with-gap.png` and `10-sleep-detail.png` in `client-screenshots/`.
-
-The current combined exports are `DailyCare-client-presentation.png` and `DailyCare-complete-presentation.png`. Editable boards are `/client-presentation.html` and `/complete-presentation.html`. Their existing visual layouts are preserved, with new screenshots and explanations.
-
-With the local server running, `node .capture-tools/capture.cjs` runs the actual Anna-to-Jane flow and captures its screens. `node .capture-tools/refresh-presentations.cjs` aligns the presentation copy, and `node .capture-tools/export-complete.cjs` exports both presentation boards. Browser export dependencies are isolated in `.capture-tools/node_modules/`.
-
-Run `npm run check` for JavaScript syntax validation. The flow check covers saved summaries, editing only one's own entries, read-only handover, scheduled versus missing items, bathing, the grooming gap, later observations, completion links and matching family updates.
-
-## Prototype limits
-
-All data is fictional. This is a local visual prototype using sessionStorage for one active day. Switching caregivers demonstrates a handover in the same browser session, without authentication or cross-device synchronization. Selecting another date starts a new draft. Sending is simulated; no messages go to a family or backend.
-
-The app uses plain HTML, CSS and JavaScript. `styles.css` remains the approved visual foundation, `shifts.css` adds the new states, `day.js` holds the shared record, and `app.js` renders it. Root mobile pages are mirrored into `dist/`, which the local server and Sites serve. `dist/index.html` is the all-screens presentation.
-
-## GitHub Pages client preview
-
-The repository root is a standalone static mobile prototype. It needs no build step or server-side code.
-
-1. Push the repository to GitHub.
-2. Open **Settings → Pages**.
-3. Choose **Deploy from a branch**, select the main branch and the **/(root)** folder, then save.
-4. Share the generated GitHub Pages URL with the client.
-
-The root `index.html` opens the DailyCare entry screen directly. `review.html`, `styles.css`, `app.js`, and `assets/` support the interactive flow. All demo data remains in the visitor's browser session and nothing is sent to a backend.
+- `app/` — Next.js routes and browser script loader.
+- `index.html`, `care.html`, `review.html`, `family.html`, `system.html` — page markup.
+- `styles.css`, `shifts.css`, `assets/` — design assets.
+- `day.js`, `app.js`, `menu.js` — interactive browser behavior.
+- `dist/` and `client-screenshots/` — earlier presentation exports; they are not part of the Next.js app.
