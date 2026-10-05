@@ -69,7 +69,8 @@
     const query = $('#resident-search').value.trim().toLocaleLowerCase();
     let matches = 0;
     $$('#resident-list [data-resident]').forEach(option => {
-      const visible = option.querySelector('strong').textContent.toLocaleLowerCase().includes(query);
+      const name = option.querySelector('strong').textContent.toLocaleLowerCase();
+      const visible = !query || name.split(/\s+/).some(part => part.startsWith(query));
       option.hidden = !visible;
       if (visible) matches += 1;
     });
