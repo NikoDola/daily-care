@@ -1,4 +1,21 @@
 /* Small additions to the original DailyCare components. */
+.profile-button{width:44px;height:44px;flex-shrink:0;border:2px solid #daddcc;background-color:#e9ebdc;transition:border-color var(--duration),transform var(--duration)}
+.profile-button:hover{border-color:#9eac91;transform:scale(1.04)}
+.profile-dialog{width:calc(100% - 36px);max-width:360px;padding:22px;border:1px solid var(--line);border-radius:22px;background:var(--paper);color:var(--ink);box-shadow:0 20px 60px #25301e30}
+.profile-dialog::backdrop{background:#2630218c}
+.profile-dialog .sheet-top{display:flex;align-items:center;justify-content:space-between}
+.profile-welcome{display:flex;flex-direction:column;align-items:center;text-align:center;padding:10px 0 19px}
+.profile-dialog-avatar{width:84px;height:84px;margin-bottom:17px;border:3px solid #daddcc}
+.profile-welcome .eyebrow{color:#7a856f}
+.profile-welcome h2{margin:7px 0 5px;font-family:var(--font-display);font-size:27px;font-weight:400}
+.profile-welcome>p{font-size:14px;color:#52604d}
+.profile-actions{display:flex;flex-direction:column;gap:8px}
+.profile-actions button{min-height:44px;border-radius:22px;background:var(--olive);color:var(--paper);font-size:13px;font-weight:600}
+.profile-actions button:hover{background:var(--olive-hover)}
+.profile-actions #reset-profile-photo{background:var(--sage);color:var(--olive)}
+.profile-actions #reset-profile-photo:hover{background:#d9e1ce}
+#profile-feedback{min-height:18px;margin-top:12px;font-size:12px;text-align:center;color:#52604d}
+.profile-note{margin-top:4px;font-size:11px;text-align:center;color:var(--muted)}
 .menu-resident-switch{display:flex;align-items:center;gap:9px;width:100%;min-height:72px;margin:10px 0 12px;padding:9px;text-align:left;background:#f7ebe2;border:1px solid #e6d4c8;border-radius:11px;color:var(--ink);cursor:pointer}
 .menu-resident-switch:hover{background:#f3e2d5;border-color:#d5bcae}
 .menu-resident-switch:focus-visible{outline:3px solid #947c48;outline-offset:2px}
@@ -81,13 +98,7 @@
 [hidden]{display:none!important}
 @media(max-width:360px){.care-item .decision-options button{padding:6px;font-size:11px}.day-progress{gap:5px 10px}}
 
-/* Make the signed-in caregiver and selected resident distinct. */
-.caregiver-banner{display:flex;align-items:center;gap:12px;padding:13px 14px;background:var(--olive);color:var(--paper);border-radius:14px;margin:3px 0 11px}
-.caregiver-banner>div{display:flex;flex-direction:column;gap:2px;min-width:0}
-.caregiver-banner strong{font-size:15px;font-weight:650;line-height:1.25}
-.caregiver-banner #caregiver-shift{font-size:11px;color:#dce5d3}
-.caregiver-kicker{font-size:9px;font-weight:700;letter-spacing:1.4px;color:#dce5d3}
-.caregiver-avatar{width:43px;height:43px;background:#e9ebdc;color:var(--olive);font-size:12px;border:2px solid #b8c4aa}
+/* Keep the caregiver portrait distinct from resident portraits. */
 .caregiver-photo{background-image:url('assets/caregiver-portraits.png');background-size:200% 100%;background-repeat:no-repeat;background-color:#e9ebdc;color:transparent}
 .caregiver-photo--anna{background-position:0 0}
 .caregiver-photo--jane{background-position:100% 0}
@@ -125,4 +136,4 @@
 .resident-option strong{font-size:14px;font-weight:650}
 .resident-option small{font-size:11px;color:#64715b}
 .resident-option-arrow{margin-left:auto;font-size:20px;color:var(--olive)}
-@media(max-width:360px){.caregiver-banner{padding:11px}.resident-switch{padding:10px}.app-page .resident-switch strong{font-size:15px}}
+@media(max-width:360px){.resident-switch{padding:10px}.app-page .resident-switch strong{font-size:15px}.review-header .review-step{display:none}}

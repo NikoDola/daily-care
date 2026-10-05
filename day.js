@@ -16,7 +16,7 @@
     if (residents[selected]) residentId = selected;
   } catch { /* Storage may be unavailable in local previews. */ }
   const storageKey = id => `dailycare-resident-${id}-v1`;
-  const people = { anna: { name: 'Anna Lewis', first: 'Anna', initials: 'AL', shift: 'Morning shift' }, jane: { name: 'Jane Doe', first: 'Jane', initials: 'JD', shift: 'Final shift' } };
+  const people = { anna: { name: 'Anna Lewis', first: 'Anna', initials: 'AL', shift: 'Morning shift' }, jane: { name: 'Jane Doe', first: 'Jane', initials: 'JD', shift: 'Evening shift' } };
   const labels = { breakfast: 'Breakfast', lunch: 'Lunch', dinner: 'Dinner', am: 'AM medication', pm: 'PM medication', shower: 'Bathing', grooming: 'Grooming', mood: 'Mood', sleep: 'Sleep', concerns: 'Concerns' };
   const keys = Object.keys(labels);
   const concernKeys = ['appetite', 'wandering', 'sundowning', 'fall', 'pain', 'skin', 'other'];

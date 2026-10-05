@@ -21,10 +21,21 @@
   const caregiverPortrait = id => `caregiver-photo caregiver-photo--${id}`;
   const observationHTML = item => `<div class="later-observation"><strong>${escape(item.category === 'Mood' && item.status ? `${item.status} later in the day` : item.category)}</strong>${item.note ? `<p class="answer-note">${escape(item.note)}</p>` : ''}<span class="byline">Recorded by ${escape(D.people[item.caregiver]?.first || '')} · ${escape(D.people[item.caregiver]?.shift || '')}</span></div>`;
   if (embedded) document.documentElement.classList.add('embedded');
+  const profileStorageKey = `dailycare-caregiver-photo-${state.caregiver}-v1`;
+  let customPhoto = '';
+  try {
+    const storedPhoto = localStorage.getItem(profileStorageKey);
+    if (storedPhoto?.startsWith('data:image/jpeg;base64,')) customPhoto = storedPhoto;
+  } catch { /* Private browsing can block local storage. */ }
+  const appMenu = $('.app-header-actions .app-menu');
+  if (appMenu) {
+    appMenu.insertAdjacentHTML('beforebegin', '<button type="button" id="profile-button" class="avatar profile-button" data-caregiver-photo aria-label="Your caregiver profile" aria-haspopup="dialog" aria-controls="profile-dialog"></button>');
+    document.body.insertAdjacentHTML('beforeend', '<dialog id="profile-dialog" class="profile-dialog" aria-labelledby="profile-title"><div class="sheet-top"><span class="eyebrow">YOUR PROFILE</span><button class="close-button" type="button" data-action="close-profile" aria-label="Close profile">×</button></div><div class="profile-welcome"><span class="avatar profile-dialog-avatar" data-caregiver-photo aria-hidden="true"></span><span class="eyebrow">WELCOME BACK</span><h2 id="profile-title"></h2><p id="profile-shift"></p></div><div class="profile-actions"><button type="button" id="change-profile-photo">Change profile photo</button><button type="button" id="reset-profile-photo" hidden>Use original photo</button></div><input id="profile-photo-input" type="file" accept="image/*" hidden><p id="profile-feedback" role="status"></p><p class="profile-note">Photo changes stay on this device.</p></dialog>');
+  }
   if ($('#menu-caregiver') && !$('#resident-dialog')) document.body.insertAdjacentHTML('beforeend', `<dialog id="resident-dialog" class="resident-dialog" aria-labelledby="resident-dialog-title"><div class="sheet-top"><span class="eyebrow">YOUR RESIDENTS</span><button class="close-button" type="button" data-action="close-residents" aria-label="Close resident list">×</button></div><h2 id="resident-dialog-title">Whose day are you recording?</h2><p>Each resident has a separate care record in this demo.</p><label class="resident-search" for="resident-search">Find a resident</label><div class="resident-search-field"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg><input id="resident-search" type="search" placeholder="Search by name" autocomplete="off" aria-controls="resident-list"></div><p id="resident-empty" class="resident-empty" role="status" hidden>No residents found.</p><div id="resident-list"></div></dialog>`);
   function updateIdentity() {
     const holder = $('#menu-caregiver');
-    if (holder) holder.innerHTML = `<div class="menu-caregiver"><span class="avatar ${caregiverPortrait(state.caregiver)}" aria-hidden="true"></span><div><span class="micro-label">SIGNED IN AS</span><strong>${person().name}</strong></div></div><p class="menu-shift">${person().shift}</p>`;
+    if (holder) holder.innerHTML = `<div class="menu-caregiver"><span class="avatar ${caregiverPortrait(state.caregiver)}" data-caregiver-photo aria-hidden="true"></span><div><span class="micro-label">SIGNED IN AS</span><strong>${escape(person().name)}</strong></div></div><p class="menu-shift">${escape(person().shift)}</p>`;
     if (holder) {
       holder.parentElement.querySelector('.menu-label').insertAdjacentElement('afterend', holder);
       let menuResident = $('#menu-resident-switch');
@@ -34,9 +45,17 @@
       }
       menuResident.innerHTML = `<span class="avatar ${portrait(D.residentId)}" aria-hidden="true"></span><span class="menu-resident-details"><span class="micro-label">CARING FOR</span><strong>${escape(resident.name)}</strong><small>Switch resident</small></span><span class="menu-resident-arrow" aria-hidden="true"></span>`;
     }
-    if ($('#active-caregiver')) $('#active-caregiver').textContent = person().name;
-    if ($('#caregiver-avatar')) { $('#caregiver-avatar').className = `avatar caregiver-avatar ${caregiverPortrait(state.caregiver)}`; $('#caregiver-avatar').textContent = ''; }
-    if ($('#caregiver-shift')) $('#caregiver-shift').textContent = person().shift;
+    $$('[data-caregiver-photo]').forEach(photo => {
+      photo.classList.remove('caregiver-photo--anna', 'caregiver-photo--jane');
+      photo.classList.add(...caregiverPortrait(state.caregiver).split(' '));
+      photo.style.backgroundImage = customPhoto ? `url("${customPhoto}")` : '';
+      photo.style.backgroundSize = customPhoto ? 'cover' : '';
+      photo.style.backgroundPosition = customPhoto ? 'center' : '';
+    });
+    if ($('#profile-button')) $('#profile-button').setAttribute('aria-label', `Your profile: ${person().name}`);
+    if ($('#profile-title')) $('#profile-title').textContent = `Welcome, ${person().first}!`;
+    if ($('#profile-shift')) $('#profile-shift').textContent = person().shift;
+    if ($('#reset-profile-photo')) $('#reset-profile-photo').hidden = !customPhoto;
     if ($('#resident-name')) $('#resident-name').textContent = resident.name;
     if ($('#resident-photo')) { $('#resident-photo').className = `avatar person-avatar ${portrait(D.residentId)}`; $('#resident-photo').textContent = ''; }
     if ($('.day-heading h1')) $('.day-heading h1').innerHTML = `How was<br>${escape(resident.first)}’s day?`;
@@ -66,6 +85,18 @@
       $('#resident-dialog').showModal();
       $('#resident-search').focus();
     }
+    if (event.target.closest('#profile-button')) {
+      $('#profile-feedback').textContent = '';
+      $('#profile-dialog').showModal();
+    }
+    if (event.target.closest('[data-action="close-profile"]')) $('#profile-dialog').close();
+    if (event.target.closest('#change-profile-photo')) $('#profile-photo-input').click();
+    if (event.target.closest('#reset-profile-photo')) {
+      try { localStorage.removeItem(profileStorageKey); } catch { /* The current page can still show the original photo. */ }
+      customPhoto = '';
+      updateIdentity();
+      $('#profile-feedback').textContent = 'Original photo restored.';
+    }
     if (event.target.closest('[data-action="close-residents"]')) $('#resident-dialog').close();
     const chosenResident = event.target.closest('[data-resident]');
     if (chosenResident) {
@@ -75,6 +106,33 @@
     if (event.target.closest('[data-action="close-shift"]')) $('#shift-dialog').close();
   });
   updateIdentity();
+
+  if ($('#profile-photo-input')) $('#profile-photo-input').addEventListener('change', async event => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    const feedback = $('#profile-feedback');
+    if (!file.type.startsWith('image/') || file.size > 10 * 1024 * 1024) {
+      feedback.textContent = 'Choose an image smaller than 10 MB.';
+      event.target.value = '';
+      return;
+    }
+    try {
+      const bitmap = await createImageBitmap(file);
+      const canvas = document.createElement('canvas');
+      canvas.width = canvas.height = 320;
+      const side = Math.min(bitmap.width, bitmap.height);
+      canvas.getContext('2d').drawImage(bitmap, (bitmap.width - side) / 2, (bitmap.height - side) / 2, side, side, 0, 0, 320, 320);
+      bitmap.close();
+      const nextPhoto = canvas.toDataURL('image/jpeg', 0.85);
+      localStorage.setItem(profileStorageKey, nextPhoto);
+      customPhoto = nextPhoto;
+      updateIdentity();
+      feedback.textContent = 'Profile photo updated.';
+    } catch {
+      feedback.textContent = 'Could not save that photo. Try another image.';
+    }
+    event.target.value = '';
+  });
 
   if ($('#resident-list')) $('#resident-list').innerHTML = Object.entries(D.residents).map(([id, item]) => `<button type="button" class="resident-option" data-resident="${id}" ${id === D.residentId ? 'aria-current="true"' : ''}><span class="avatar ${portrait(id)}" aria-hidden="true"></span><span><strong>${escape(item.name)}</strong><small>${id === D.residentId ? 'Current resident' : 'View care record'}</small></span><span class="resident-option-arrow" aria-hidden="true">${id === D.residentId ? '✓' : '→'}</span></button>`).join('');
   function filterResidents() {
