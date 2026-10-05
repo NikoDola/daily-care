@@ -7,7 +7,7 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }) {
   const { legacy } = await params;
-  return { title: ({ 'review.html': 'DailyCare · Review the day', 'family.html': 'DailyCare · Margaret’s day', 'system.html': 'DailyCare · Design system', 'experience.html': 'DailyCare · A day of care' })[legacy] || 'DailyCare · Today’s care' };
+  return { title: ({ 'review.html': 'DailyCare · Review the day', 'family.html': 'DailyCare · Family update', 'system.html': 'DailyCare · Design system', 'experience.html': 'DailyCare · A day of care' })[legacy] || 'DailyCare · Today’s care' };
 }
 
 export default async function LegacyRoute({ params }) {

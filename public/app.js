@@ -16,21 +16,29 @@
   const byline = key => state.by[key] ? `Recorded by ${D.people[state.by[key]].first}` : '';
   const authorHTML = key => byline(key) ? `<span class="byline">${escape(byline(key))}</span>` : '';
   const person = () => D.people[state.caregiver];
+  const resident = D.resident;
+  const portrait = id => `resident-photo resident-photo--${id}`;
   const observationHTML = item => `<div class="later-observation"><strong>${escape(item.category === 'Mood' && item.status ? `${item.status} later in the day` : item.category)}</strong>${item.note ? `<p class="answer-note">${escape(item.note)}</p>` : ''}<span class="byline">Recorded by ${escape(D.people[item.caregiver]?.first || '')} · ${escape(D.people[item.caregiver]?.shift || '')}</span></div>`;
   if (embedded) document.documentElement.classList.add('embedded');
   function updateIdentity() {
     const holder = $('#menu-caregiver');
-    if (holder) holder.innerHTML = `<div class="menu-caregiver"><span class="avatar">${person().initials}</span><div><span class="micro-label">CAREGIVER</span><strong>${person().name}</strong></div></div><p class="menu-shift">${person().shift}</p><button class="switch-caregiver" data-action="switch-caregiver">Switch caregiver</button>`;
-    if ($('#active-caregiver')) $('#active-caregiver').textContent = `Caregiver · ${person().first} · ${person().shift}`;
-  }
-  function switchCaregiver(id) {
-    if (!D.people[id]) return;
-    state.caregiver = id;
-    if (id === 'jane') state.phase = 'evening';
-    persist();
-    const next = new URL(D.link('care.html'));
-    next.searchParams.set('caregiver', id);
-    location.href = next.href;
+    if (holder) holder.innerHTML = `<div class="menu-caregiver"><span class="avatar">${person().initials}</span><div><span class="micro-label">SIGNED IN AS</span><strong>${person().name}</strong></div></div><p class="menu-shift">${person().shift}</p>`;
+    if ($('#active-caregiver')) $('#active-caregiver').textContent = person().name;
+    if ($('#caregiver-avatar')) $('#caregiver-avatar').textContent = person().initials;
+    if ($('#caregiver-shift')) $('#caregiver-shift').textContent = person().shift;
+    if ($('#resident-name')) $('#resident-name').textContent = resident.name;
+    if ($('#resident-photo')) { $('#resident-photo').className = `avatar person-avatar ${portrait(D.residentId)}`; $('#resident-photo').textContent = ''; }
+    if ($('.day-heading h1')) $('.day-heading h1').innerHTML = `How was<br>${escape(resident.first)}’s day?`;
+    $$('.review-person').forEach(container => {
+      container.querySelector('.person-avatar').className = `avatar person-avatar ${portrait(D.residentId)}`;
+      container.querySelector('.person-avatar').textContent = '';
+      container.querySelector('strong').textContent = resident.name;
+    });
+    if ($('.family-content .review-hero h1')) $('.family-content .review-hero h1').innerHTML = `A little window<br>into ${escape(resident.first)}’s day.`;
+    if ($('.family-signoff>span')) $('.family-signoff>span').textContent = `${resident.first}’s caregivers today`;
+    if ($('.mood-picker')) $('.mood-picker').setAttribute('aria-label', `${resident.first}’s mood`);
+    if ($('.sleep-options')) $('.sleep-options').setAttribute('aria-label', `${resident.first}’s sleep`);
+    document.title = `DailyCare · ${resident.name}`;
   }
   document.addEventListener('click', event => {
     const link = event.target.closest('a');
@@ -39,16 +47,18 @@
       const focus = target.searchParams.get('focus') || target.hash.slice(1).replace(/-title$/, '');
       link.href = D.link(target.pathname.split('/').pop(), focus);
     }
-    if (event.target.closest('[data-action="switch-caregiver"]')) {
-      $('.mobile-menu').open = false;
-      $('#shift-body').innerHTML = `<p class="eyebrow">A SHARED DAY OF CARE</p><h1 id="shift-title">Who is caring today?</h1><p>Saved entries stay with Margaret’s day.</p>${Object.entries(D.people).map(([id, p]) => `<button class="choice-person" data-caregiver="${id}"><span class="avatar caregiver">${p.initials}</span><span><strong>${p.name}</strong><small>${p.shift}</small></span></button>`).join('')}<button class="secondary-action" data-action="close-shift">Keep current caregiver</button>`;
-      $('#shift-dialog').showModal();
+    if (event.target.closest('#resident-switch')) $('#resident-dialog').showModal();
+    if (event.target.closest('[data-action="close-residents"]')) $('#resident-dialog').close();
+    const chosenResident = event.target.closest('[data-resident]');
+    if (chosenResident) {
+      if (chosenResident.dataset.resident === D.residentId) $('#resident-dialog').close();
+      else D.switchResident(chosenResident.dataset.resident);
     }
-    const choice = event.target.closest('[data-caregiver]');
-    if (choice) switchCaregiver(choice.dataset.caregiver);
     if (event.target.closest('[data-action="close-shift"]')) $('#shift-dialog').close();
   });
   updateIdentity();
+
+  if ($('#resident-list')) $('#resident-list').innerHTML = Object.entries(D.residents).map(([id, item]) => `<button type="button" class="resident-option" data-resident="${id}" ${id === D.residentId ? 'aria-current="true"' : ''}><span class="avatar ${portrait(id)}" aria-hidden="true"></span><span><strong>${escape(item.name)}</strong><small>${id === D.residentId ? 'Current resident' : 'View care record'}</small></span><span class="resident-option-arrow" aria-hidden="true">${id === D.residentId ? '✓' : '→'}</span></button>`).join('');
 
   if (document.body.dataset.page === 'care') {
     const dialog = $('#detail-dialog');
@@ -98,13 +108,13 @@
       $('#draft-status').textContent = editing ? 'Editing my entries' : savedView ? 'Saved' : 'Draft';
       $('#save-status').textContent = savedView ? 'Your part is saved. Nothing has been sent to the family.' : 'Nothing sent to the family';
       $('#save-part').innerHTML = `${savedView ? 'Edit my entries' : editing ? 'Save changes' : 'Save my part'} <span aria-hidden="true">→</span>`;
-      $('#review-link').hidden = state.caregiver !== 'jane';
+      $('#review-link').hidden = false;
       $('#care-date').value = state.date;
       $('.date-line label').textContent = formattedDate(state.date);
       const handover = state.caregiver === 'jane' && state.saved.anna;
       $('#shift-message').hidden = !handover && !savedView;
       $('#shift-message').textContent = savedView ? `${person().first}’s completed part. Each entry below shows who recorded it.` : 'Anna’s part is saved. Her entries are shown below. Record dinner, PM medication, bathing and grooming during your shift.';
-      $('.routine-section>.section-helper').textContent = savedView ? 'Your saved observations for Margaret’s day.' : 'Record each thing you observed.';
+      $('.routine-section>.section-helper').textContent = savedView ? `Your saved observations for ${resident.first}’s day.` : 'Record each thing you observed.';
       $('.changes-section>.section-helper').textContent = canEdit('concerns') ? 'Usually none. Choose what you observed.' : 'Usually none';
       $('[data-detail="appetite"]').hidden = !mealKeys.some(canEdit);
       $('.add-moment').hidden = !canEdit('note');
@@ -178,7 +188,7 @@
       showSaved();
     });
     function showSaved() {
-      $('#shift-body').innerHTML = `<span class="art art-sun" aria-hidden="true"></span><p class="eyebrow">SAVED FOR THE NEXT CAREGIVER</p><h1 id="shift-title">Your part is saved.</h1><p>${person().first}’s entries are part of Margaret’s day.</p><p><strong>Nothing has been sent to the family.</strong></p>${state.caregiver === 'anna' ? '<button class="primary-button" data-caregiver="jane">Continue to Jane’s shift <span>→</span></button>' : `<a class="primary-button" href="review.html">Review the whole day <span>→</span></a>`}<button class="secondary-action" data-action="close-shift">Back to the day</button>`;
+      $('#shift-body').innerHTML = `<span class="art art-sun" aria-hidden="true"></span><p class="eyebrow">CARE RECORD SAVED</p><h1 id="shift-title">Your part is saved.</h1><p>${person().first}’s entries are part of ${escape(resident.first)}’s day.</p><p><strong>Nothing has been sent to the family.</strong></p><a class="primary-button" href="review.html">Review the day <span>→</span></a><button class="secondary-action" data-action="close-shift">Back to the day</button>`;
       $('#shift-dialog').showModal();
     }
     const textarea = (value, label = 'A little context') => `<div class="field-group"><label class="field-label" for="detail-note">${label}<span class="optional-label">OPTIONAL</span></label><textarea id="detail-note" name="note" rows="3" maxlength="400" placeholder="Just a sentence or two…">${escape(value)}</textarea><div class="textarea-footer"><span id="character-count">${value.length}</span> / 400</div></div>`;
@@ -202,7 +212,7 @@
         if (moodObservation) {
           detailBody.innerHTML = `<h1 id="detail-title">Mood later in the day.</h1><p class="detail-description">${escape(D.people[state.by.mood]?.first || 'The earlier caregiver')} recorded ${escape(state.mood || 'an earlier mood')}. What did you observe during your shift?</p><input type="hidden" name="category" value="Mood"><div class="field-group"><span class="field-label" id="later-mood-label">Choose a mood</span><div class="later-mood-options" role="radiogroup" aria-labelledby="later-mood-label">${Object.keys(faces).map(mood => `<label><input type="radio" name="status" value="${escape(mood)}" ${item.status === mood ? 'checked' : ''} required>${faces[mood]}<span>${escape(mood)}</span></label>`).join('')}</div></div>${textarea(item.note || '', 'A little context')}`;
         } else {
-          detailBody.innerHTML = `<h1 id="detail-title">Later in the day.</h1><p class="detail-description">Add what you observed during your shift. Earlier entries stay with their caregiver.</p><div class="field-group"><label class="field-label" for="observation-category">What did you observe?</label><select id="observation-category" name="category">${['Sleep','Concerns'].map(value => `<option ${item.category === value ? 'selected' : ''}>${value}</option>`).join('')}</select></div>${textarea(item.note || '', 'Your observation')}<label class="observation-difference"><input type="checkbox" name="different" ${item.different ? 'checked' : ''}> This was different from Margaret’s usual day</label>`;
+          detailBody.innerHTML = `<h1 id="detail-title">Later in the day.</h1><p class="detail-description">Add what you observed during your shift. Earlier entries stay with their caregiver.</p><div class="field-group"><label class="field-label" for="observation-category">What did you observe?</label><select id="observation-category" name="category">${['Sleep','Concerns'].map(value => `<option ${item.category === value ? 'selected' : ''}>${value}</option>`).join('')}</select></div>${textarea(item.note || '', 'Your observation')}<label class="observation-difference"><input type="checkbox" name="different" ${item.different ? 'checked' : ''}> This was different from ${escape(resident.first)}’s usual day</label>`;
           $('#detail-note').required = true;
           $('.optional-label', detailBody).remove();
         }
@@ -324,7 +334,15 @@
     $('.moment-signature').textContent = byline('note');
   }
   if (document.body.dataset.page === 'review') {
-    const finalShift = state.caregiver === 'jane' && state.phase === 'evening';
+    const finalShift = true;
+    $$('.recipient').forEach((label, index) => {
+      const member = resident.family[index];
+      if (!member) { label.hidden = true; return; }
+      label.querySelector('input').value = member.name;
+      label.querySelector('.avatar').textContent = member.name[0];
+      label.querySelector('strong').textContent = member.name;
+      label.querySelector('span:nth-of-type(2)>span').textContent = member.relation;
+    });
     $('.review-hero>.eyebrow').textContent = formattedDate(state.date);
     $('.review-person>div>span').textContent = 'Care from ' + (D.list(D.caregivers()) || 'your caregivers');
     $('.review-step').textContent = finalShift ? 'FINAL SHIFT' : 'SAVED DAY';
@@ -391,17 +409,17 @@
     const recordedMeals = mealKeys.filter(D.recorded);
     const allWell = recordedMeals.length === 3 && recordedMeals.every(key => D.status(key) === 'Ate well');
     const sentences = [];
-    if (allWell) sentences.push('Margaret ate well at breakfast, lunch and dinner.');
+    if (allWell) sentences.push(`${resident.first} ate well at breakfast, lunch and dinner.`);
     else recordedMeals.forEach(key => sentences.push(`${D.labels[key]}: ${D.status(key).toLowerCase()}.`));
     const laterMood = state.observations.filter(item => item.category === 'Mood' && item.status).at(-1);
-    if (state.mood) sentences.push(laterMood ? `${D.people[state.by.mood]?.first || 'Her caregiver'} observed Margaret was ${state.mood.toLowerCase()} in the morning. ${D.people[laterMood.caregiver]?.first || 'Her next caregiver'} later observed she was ${laterMood.status.toLowerCase()}.` : `${D.people[state.by.mood]?.first || 'Her caregiver'} recorded that she appeared ${state.mood.toLowerCase()}.`);
+    if (state.mood) sentences.push(laterMood ? `${D.people[state.by.mood]?.first || 'Her caregiver'} observed ${resident.first} was ${state.mood.toLowerCase()} in the morning. ${D.people[laterMood.caregiver]?.first || 'Her next caregiver'} later observed she was ${laterMood.status.toLowerCase()}.` : `${D.people[state.by.mood]?.first || 'Her caregiver'} recorded that she appeared ${state.mood.toLowerCase()}.`);
     if (state.care.am === 'given' && state.care.pm === 'given') sentences.push('Her morning and evening medication were given.');
     else doseKeys.filter(D.recorded).forEach(key => {
       const period = key === 'am' ? 'morning' : 'evening';
       sentences.push(state.care[key] === 'refused' ? `She refused her ${period} medication.` : `Her ${period} medication was ${state.care[key]}.`);
     });
     const bathing = state.personal.shower;
-    if (['Bath','Shower','Done'].includes(bathing)) sentences.push(`${D.people[state.by.shower]?.first || 'Her caregiver'} helped Margaret with ${bathing === 'Bath' ? 'a bath' : bathing === 'Shower' ? 'a shower' : 'bathing'}.`);
+    if (['Bath','Shower','Done'].includes(bathing)) sentences.push(`${D.people[state.by.shower]?.first || 'Her caregiver'} helped ${resident.first} with ${bathing === 'Bath' ? 'a bath' : bathing === 'Shower' ? 'a shower' : 'bathing'}.`);
     else if (bathing) sentences.push(bathing === 'Declined' ? 'She declined bathing.' : 'Bathing was not done.');
     if (state.personal.grooming) sentences.push(state.personal.grooming === 'Done' ? 'Her grooming was completed.' : state.personal.grooming === 'Declined' ? 'She declined grooming.' : 'Grooming was not done.');
     if (state.sleep === 'As usual') sentences.push('Sleep was recorded as usual.');

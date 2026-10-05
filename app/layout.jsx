@@ -1,6 +1,6 @@
 export const metadata = {
   title: 'DailyCare · Today’s care',
-  description: 'Record Margaret’s daily care and prepare an update for her family.',
+  description: 'Record a resident’s daily care and prepare an update for their family.',
 };
 
 export default function RootLayout({ children }) {

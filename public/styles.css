@@ -83,6 +83,8 @@ dialog{border:0;color:var(--ink);background:var(--paper)}dialog::backdrop{backgr
 .mobile-menu nav>p{font-family:var(--font-display);font-size:12px;color:#8b8d76;padding:15px 9px 5px}
 @media(max-width:760px){.studio-header>.studio-nav{display:none}.studio-header>.mobile-menu{display:block}}
 @media print{.mobile-menu{display:none!important}.app-page{background:var(--paper);padding:0}.app-shell{border-radius:0;box-shadow:none;min-height:0;padding-bottom:0}.app-footer{position:static;transform:none;box-shadow:none;border-radius:0}.home-indicator{margin-bottom:0}.app-page{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+/* On desktop the phone frame can grow taller than the viewport. Keep its footer at the frame's end. */
+@media screen and (min-width:500px){.app-page .app-footer{position:absolute;bottom:0;left:0;transform:none;width:100%;max-width:none}}
 @media(max-width:370px){.app-page .routine-toggle{font-size:.6875rem;padding:6px}.app-page .care-row{gap:3px}.app-page .care-row>.art{width:51px}.app-page .mood-choice{font-size:.625rem}.app-page .mood-face{width:42px;height:42px}.app-page .change-options{gap:5px}.app-page .change-options>button{font-size:.6875rem;padding:8px}.app-page .summary-row{font-size:.6875rem}.app-page .summary-row>span:last-child{font-size:.625rem}}
 
 /* Personal-care choice and calm, easy-to-scan change cards. */

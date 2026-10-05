@@ -1,11 +1,9 @@
 /* Small additions to the original DailyCare components. */
-.caregiver-line{font-size:.75rem;color:#52604d;margin-top:4px}
 .menu-caregiver{display:flex;align-items:center;gap:11px;padding:16px 9px 8px;border-top:1px solid var(--line);margin-top:12px}
 .menu-caregiver .avatar{width:39px;height:39px;background:#e8e6dc;font-size:13px}
 .menu-caregiver>div{display:flex;flex-direction:column;gap:3px;font-size:14px}
 .menu-caregiver .micro-label{font-size:10px}
 .menu-shift{font-size:12px;color:#52604d;padding:0 9px 4px 59px}
-.mobile-menu .switch-caregiver{font-size:12px;color:#52604d;text-decoration:underline;padding:8px 9px 8px 59px;text-align:left}
 .day-progress{display:flex;gap:7px 13px;flex-wrap:wrap;padding:12px 0;border-bottom:1px solid var(--line);font-size:12px;line-height:1.5;color:#52604d}
 .day-progress strong{color:var(--ink);font-weight:600}
 .day-progress .different-count{color:#795724}
@@ -35,9 +33,6 @@
 .shift-footer .footer-meta{margin-bottom:5px}
 .shift-footer .secondary-review{display:block;text-align:center;font-size:12px;text-decoration:underline;margin:8px auto 0}
 .app-shell:has(.shift-footer){padding-bottom:180px}
-.shift-dialog .choice-person{display:flex;width:100%;gap:12px;align-items:center;border:1px solid var(--line);border-radius:8px;padding:14px;margin:12px 0;text-align:left}
-.choice-person>span:last-child{display:flex;flex-direction:column;gap:3px}
-.choice-person small{font-size:12px;color:#52604d}
 .shift-dialog .secondary-action{display:block;margin:13px auto 0;font-size:14px;text-decoration:underline;padding:10px}
 .shift-dialog .primary-button{margin-top:20px}
 .review-item .byline{font-size:11px}
@@ -75,4 +70,36 @@
 .care-item .recorded-answer .byline{margin-top:2px}
 .care-item .recorded-answer{margin-bottom:3px}
 [hidden]{display:none!important}
-@media(max-width:360px){.care-item .decision-options button{padding:6px;font-size:11px}.day-progress{gap:5px 10px}.caregiver-line{font-size:11px}}
+@media(max-width:360px){.care-item .decision-options button{padding:6px;font-size:11px}.day-progress{gap:5px 10px}}
+
+/* Make the signed-in caregiver and selected resident distinct. */
+.caregiver-banner{display:flex;align-items:center;gap:12px;padding:13px 14px;background:var(--olive);color:var(--paper);border-radius:14px;margin:3px 0 11px}
+.caregiver-banner>div{display:flex;flex-direction:column;gap:2px;min-width:0}
+.caregiver-banner strong{font-size:15px;font-weight:650;line-height:1.25}
+.caregiver-banner #caregiver-shift{font-size:11px;color:#dce5d3}
+.caregiver-kicker{font-size:9px;font-weight:700;letter-spacing:1.4px;color:#dce5d3}
+.caregiver-avatar{width:43px;height:43px;background:#e9ebdc;color:var(--olive);font-size:12px;border:2px solid #b8c4aa}
+.resident-switch{width:100%;min-height:78px;text-align:left;border:1px solid #e6d4c8;border-radius:15px;background:#f7ebe2;padding:11px 13px;gap:12px;margin-bottom:2px;transition:background var(--duration),border-color var(--duration)}
+.resident-switch:hover{background:#f3e2d5;border-color:#d5bcae}
+.resident-switch .person-avatar{width:54px;height:54px;border:2px solid #fff9f4}
+.resident-summary{display:flex;flex-direction:column;gap:5px;min-width:0}
+.resident-summary .micro-label{font-size:9px;color:#8a6757}
+.app-page .resident-switch strong{font-size:17px;font-weight:650;line-height:1.2}
+.resident-chevron{margin-left:auto;font-size:25px;line-height:1;color:#775b4b;align-self:center}
+.resident-photo{background-image:url('assets/resident-portraits.png');background-size:300% 100%;background-repeat:no-repeat;background-color:var(--peach);color:transparent}
+.resident-photo--margaret{background-position:0 0}
+.resident-photo--evelyn{background-position:50% 0}
+.resident-photo--arthur{background-position:100% 0}
+.resident-dialog{width:calc(100% - 36px);max-width:390px;border:1px solid var(--line);border-radius:22px;background:var(--paper);color:var(--ink);padding:22px;box-shadow:0 20px 60px #25301e30}
+.resident-dialog::backdrop{background:#2630218c}
+.resident-dialog .sheet-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.resident-dialog h2{font-family:var(--font-display);font-size:25px;font-weight:400;line-height:1.25;margin:5px 0 8px}
+.resident-dialog>p{font-size:12px;line-height:1.55;color:var(--muted);margin-bottom:15px}
+.resident-option{width:100%;display:flex;align-items:center;gap:12px;padding:10px;border:1px solid var(--line);border-radius:12px;margin-top:8px;text-align:left;background:#fffdf8}
+.resident-option:hover,.resident-option[aria-current=true]{background:var(--sage);border-color:#cbd7bd}
+.resident-option>.avatar{width:48px;height:48px;flex-shrink:0}
+.resident-option>span:nth-child(2){display:flex;flex-direction:column;gap:4px;min-width:0}
+.resident-option strong{font-size:14px;font-weight:650}
+.resident-option small{font-size:11px;color:#64715b}
+.resident-option-arrow{margin-left:auto;font-size:20px;color:var(--olive)}
+@media(max-width:360px){.caregiver-banner{padding:11px}.resident-switch{padding:10px}.app-page .resident-switch strong{font-size:15px}}

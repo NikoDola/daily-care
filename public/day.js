@@ -3,7 +3,19 @@
   'use strict';
   const params = new URLSearchParams(location.search);
   const embedded = params.has('embed');
-  const storageKey = 'dailycare-shared-day-v1';
+  const legacyStorageKey = 'dailycare-shared-day-v1';
+  const activeResidentKey = 'dailycare-active-resident-v1';
+  const residents = {
+    margaret: { name: 'Margaret Rose', first: 'Margaret', initials: 'MR', portrait: 'margaret', family: [{ name: 'Sophie', relation: 'Daughter' }, { name: 'James', relation: 'Son' }] },
+    evelyn: { name: 'Evelyn Carter', first: 'Evelyn', initials: 'EC', portrait: 'evelyn', family: [{ name: 'Maya', relation: 'Daughter' }, { name: 'Daniel', relation: 'Son' }] },
+    arthur: { name: 'Arthur Bennett', first: 'Arthur', initials: 'AB', portrait: 'arthur', family: [{ name: 'Lucy', relation: 'Daughter' }, { name: 'Oliver', relation: 'Son' }] },
+  };
+  let residentId = 'margaret';
+  if (!embedded) try {
+    const selected = sessionStorage.getItem(activeResidentKey);
+    if (residents[selected]) residentId = selected;
+  } catch { /* Storage may be unavailable in local previews. */ }
+  const storageKey = id => `dailycare-resident-${id}-v1`;
   const people = { anna: { name: 'Anna Lewis', first: 'Anna', initials: 'AL', shift: 'Morning shift' }, jane: { name: 'Jane Doe', first: 'Jane', initials: 'JD', shift: 'Final shift' } };
   const labels = { breakfast: 'Breakfast', lunch: 'Lunch', dinner: 'Dinner', am: 'AM medication', pm: 'PM medication', shower: 'Bathing', grooming: 'Grooming', mood: 'Mood', sleep: 'Sleep', concerns: 'Concerns' };
   const keys = Object.keys(labels);
@@ -23,7 +35,7 @@
     s.concernsChecked = true; s.by.concerns = 'anna';
     if (stage === 'morning') return s;
     s.care.lunch = true;
-    Object.assign(s, { note: 'After lunch, Margaret sat by the window and told Anna about the roses she used to grow.', phase: 'handover' });
+    Object.assign(s, { note: `After lunch, ${residents[residentId].first} sat by the window and told Anna about the roses she used to grow.`, phase: 'handover' });
     keys.filter(key => recorded(s, key)).concat('note').forEach(key => { s.by[key] = 'anna'; });
     s.saved.anna = true;
     if (['anna-end', 'saved'].includes(stage)) return s;
@@ -32,14 +44,17 @@
     s.care.dinner = true; s.by.dinner = 'jane';
     s.care.pm = 'given'; s.by.pm = 'jane';
     s.personal.shower = 'Bath'; s.by.shower = 'jane';
-    s.observations.push({ category: 'Mood', status: 'Cheerful', note: 'Margaret smiled and chatted with Jane after her bath.', caregiver: 'jane', different: true });
+    s.observations.push({ category: 'Mood', status: 'Cheerful', note: `${residents[residentId].first} smiled and chatted with Jane after her bath.`, caregiver: 'jane', different: true });
     if (!['gap', 'family-gap'].includes(stage)) { s.personal.grooming = 'Done'; s.by.grooming = 'jane'; }
     s.saved.jane = true;
-    if (stage.startsWith('family')) s.sent = { recipients: ['Sophie', 'James'], gaps: stage === 'family-gap' ? ['grooming'] : [] };
+    if (stage.startsWith('family')) s.sent = { recipients: residents[residentId].family.map(member => member.name), gaps: stage === 'family-gap' ? ['grooming'] : [] };
     return s;
   }
   let state = fresh();
-  if (!embedded) try { const saved = JSON.parse(sessionStorage.getItem(storageKey)); if (saved?.care) state = normalize(saved); } catch { /* Local file previews can block storage. */ }
+  if (!embedded) try {
+    const saved = JSON.parse(sessionStorage.getItem(storageKey(residentId)) || (residentId === 'margaret' ? sessionStorage.getItem(legacyStorageKey) : null));
+    if (saved?.care) state = normalize(saved);
+  } catch { /* Local file previews can block storage. */ }
   if (params.has('stage') || params.has('sample')) state = example(params.get('stage') || 'final');
   if (location.hash.startsWith('#%7B')) try { const incoming = JSON.parse(decodeURIComponent(location.hash.slice(1))); if (incoming?.care) state = normalize({ ...incoming, photo: incoming.photo || state.photo }); history.replaceState(null, '', location.pathname + location.search); } catch { /* Ignore malformed links. */ }
   let previous = structuredClone(state);
@@ -70,7 +85,7 @@
     });
     if (JSON.stringify(state.observations) !== JSON.stringify(previous.observations)) { state.saved[state.caregiver] = false; state.sent = null; }
     previous = structuredClone(state);
-    if (!embedded) try { sessionStorage.setItem(storageKey, JSON.stringify(state)); } catch { return false; }
+    if (!embedded) try { sessionStorage.setItem(storageKey(residentId), JSON.stringify(state)); } catch { return false; }
     return true;
   }
   function later(key) { return !recorded(state, key) && (state.phase === 'morning' ? ['lunch', 'dinner', 'pm', 'shower', 'grooming'].includes(key) : state.phase === 'handover' ? ['dinner', 'pm', 'shower', 'grooming'].includes(key) : false); }
@@ -102,5 +117,11 @@
     url.hash = encodeURIComponent(JSON.stringify({ ...state, photo: '' }));
     return url.href;
   }
-  window.DailyCare = { state, people, labels, keys, concernKeys, concernNames, embedded, params, fresh, canEdit, recorded: key => recorded(state, key), later, status, changes, caregivers, list, persist, link, replace(next) { state = normalize(next); this.state = state; previous = structuredClone(state); persist(); } };
+  function switchResident(id) {
+    if (!residents[id] || embedded) return;
+    persist();
+    try { sessionStorage.setItem(activeResidentKey, id); } catch { /* Continue without storage. */ }
+    location.href = new URL('care.html', location.href).href;
+  }
+  window.DailyCare = { state, people, residents, residentId, resident: residents[residentId], switchResident, labels, keys, concernKeys, concernNames, embedded, params, fresh, canEdit, recorded: key => recorded(state, key), later, status, changes, caregivers, list, persist, link, replace(next) { state = normalize(next); this.state = state; previous = structuredClone(state); persist(); } };
 })();
