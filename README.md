@@ -30,12 +30,12 @@ Push this folder to GitHub and import it as a project in Vercel. Keep the root d
 
 ## Current interaction scope
 
-Visitors can choose among three fictional residents, record care in separate resident drafts, save a part, review the day, and see the resulting family update. The signed-in caregiver is shown separately from the resident. There is no caregiver switch control. Data is fictional and stored in browser `sessionStorage`, so it lasts only for that browser session. The send button produces a local preview; it does not deliver a message. A real shared client and caregiver workflow would require authentication, a database, and a delivery service before using real care information.
+Visitors can search and choose among three fictional residents, record care in separate resident drafts, save a part, review the day, and see the resulting family update. The signed-in caregiver's fictional portrait is shown separately from the resident, including in the menu profile. There is no caregiver switch control. Data is fictional and stored in browser `sessionStorage`, so it lasts only for that browser session. The send button produces a local preview; it does not deliver a message. A real shared client and caregiver workflow would require authentication, a database, and a delivery service before using real care information.
 
 ## Source files
 
 - `app/` — Next.js routes and browser script loader.
 - `index.html`, `care.html`, `review.html`, `family.html`, `system.html` — page markup.
-- `styles.css`, `shifts.css`, `assets/` — design assets, including generated fictional resident portraits.
+- `styles.css`, `shifts.css`, `assets/` — design assets, including generated fictional resident and caregiver portraits.
 - `day.js`, `app.js`, `menu.js` — interactive browser behavior.
 - `dist/` and `client-screenshots/` — earlier presentation exports; they are not part of the Next.js app.

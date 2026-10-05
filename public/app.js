@@ -18,13 +18,14 @@
   const person = () => D.people[state.caregiver];
   const resident = D.resident;
   const portrait = id => `resident-photo resident-photo--${id}`;
+  const caregiverPortrait = id => `caregiver-photo caregiver-photo--${id}`;
   const observationHTML = item => `<div class="later-observation"><strong>${escape(item.category === 'Mood' && item.status ? `${item.status} later in the day` : item.category)}</strong>${item.note ? `<p class="answer-note">${escape(item.note)}</p>` : ''}<span class="byline">Recorded by ${escape(D.people[item.caregiver]?.first || '')} · ${escape(D.people[item.caregiver]?.shift || '')}</span></div>`;
   if (embedded) document.documentElement.classList.add('embedded');
   function updateIdentity() {
     const holder = $('#menu-caregiver');
-    if (holder) holder.innerHTML = `<div class="menu-caregiver"><span class="avatar">${person().initials}</span><div><span class="micro-label">SIGNED IN AS</span><strong>${person().name}</strong></div></div><p class="menu-shift">${person().shift}</p>`;
+    if (holder) holder.innerHTML = `<div class="menu-caregiver"><span class="avatar ${caregiverPortrait(state.caregiver)}" aria-hidden="true"></span><div><span class="micro-label">SIGNED IN AS</span><strong>${person().name}</strong></div></div><p class="menu-shift">${person().shift}</p>`;
     if ($('#active-caregiver')) $('#active-caregiver').textContent = person().name;
-    if ($('#caregiver-avatar')) $('#caregiver-avatar').textContent = person().initials;
+    if ($('#caregiver-avatar')) { $('#caregiver-avatar').className = `avatar caregiver-avatar ${caregiverPortrait(state.caregiver)}`; $('#caregiver-avatar').textContent = ''; }
     if ($('#caregiver-shift')) $('#caregiver-shift').textContent = person().shift;
     if ($('#resident-name')) $('#resident-name').textContent = resident.name;
     if ($('#resident-photo')) { $('#resident-photo').className = `avatar person-avatar ${portrait(D.residentId)}`; $('#resident-photo').textContent = ''; }
@@ -47,7 +48,12 @@
       const focus = target.searchParams.get('focus') || target.hash.slice(1).replace(/-title$/, '');
       link.href = D.link(target.pathname.split('/').pop(), focus);
     }
-    if (event.target.closest('#resident-switch')) $('#resident-dialog').showModal();
+    if (event.target.closest('#resident-switch')) {
+      $('#resident-search').value = '';
+      filterResidents();
+      $('#resident-dialog').showModal();
+      $('#resident-search').focus();
+    }
     if (event.target.closest('[data-action="close-residents"]')) $('#resident-dialog').close();
     const chosenResident = event.target.closest('[data-resident]');
     if (chosenResident) {
@@ -59,6 +65,24 @@
   updateIdentity();
 
   if ($('#resident-list')) $('#resident-list').innerHTML = Object.entries(D.residents).map(([id, item]) => `<button type="button" class="resident-option" data-resident="${id}" ${id === D.residentId ? 'aria-current="true"' : ''}><span class="avatar ${portrait(id)}" aria-hidden="true"></span><span><strong>${escape(item.name)}</strong><small>${id === D.residentId ? 'Current resident' : 'View care record'}</small></span><span class="resident-option-arrow" aria-hidden="true">${id === D.residentId ? '✓' : '→'}</span></button>`).join('');
+  function filterResidents() {
+    const query = $('#resident-search').value.trim().toLocaleLowerCase();
+    let matches = 0;
+    $$('#resident-list [data-resident]').forEach(option => {
+      const visible = option.querySelector('strong').textContent.toLocaleLowerCase().includes(query);
+      option.hidden = !visible;
+      if (visible) matches += 1;
+    });
+    $('#resident-empty').hidden = matches !== 0;
+  }
+  if ($('#resident-search')) {
+    $('#resident-search').addEventListener('input', filterResidents);
+    $('#resident-search').addEventListener('keydown', event => {
+      if (event.key !== 'Enter') return;
+      const first = $$('#resident-list [data-resident]').find(option => !option.hidden);
+      if (first) { event.preventDefault(); first.click(); }
+    });
+  }
 
   if (document.body.dataset.page === 'care') {
     const dialog = $('#detail-dialog');
