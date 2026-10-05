@@ -81,10 +81,22 @@ dialog{border:0;color:var(--ink);background:var(--paper)}dialog::backdrop{backgr
 .mobile-menu nav>a:hover,.mobile-menu nav>a[aria-current=page]{background:var(--sage)}
 .menu-divider{height:1px;background:var(--line);margin:10px 9px}
 .mobile-menu nav>p{font-family:var(--font-display);font-size:12px;color:#8b8d76;padding:15px 9px 5px}
+.developer-settings{margin:0 9px}
+.developer-settings>summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px;padding:10px 9px;border-radius:7px;cursor:pointer;font-size:14px;font-weight:450;color:var(--ink)}
+.developer-settings>summary::-webkit-details-marker{display:none}
+.developer-settings>summary::marker{content:''}
+.developer-settings>summary:hover,.developer-settings[open]>summary{background:var(--sage)}
+.developer-settings>summary:focus-visible{outline:3px solid #947c48;outline-offset:2px}
+.developer-settings>summary>span{font-size:18px;color:#8d967b;transition:transform var(--duration)}
+.developer-settings[open]>summary>span{transform:rotate(180deg)}
+.developer-links{margin:3px 0 7px 10px;padding-left:11px;border-left:1px solid var(--line)}
+.developer-links>a{min-height:40px;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 9px;border-radius:7px;font-size:13px}
+.developer-links>a:hover,.developer-links>a[aria-current=page]{background:var(--sage)}
+.developer-links>a>span{font-size:15px;color:#8d967b}
 @media(max-width:760px){.studio-header>.studio-nav{display:none}.studio-header>.mobile-menu{display:block}}
 @media print{.mobile-menu{display:none!important}.app-page{background:var(--paper);padding:0}.app-shell{border-radius:0;box-shadow:none;min-height:0;padding-bottom:0}.app-footer{position:static;transform:none;box-shadow:none;border-radius:0}.home-indicator{margin-bottom:0}.app-page{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
-/* On desktop the phone frame can grow taller than the viewport. Keep its footer at the frame's end. */
-@media screen and (min-width:500px){.app-page .app-footer{position:absolute;bottom:0;left:0;transform:none;width:100%;max-width:none}}
+/* Keep the desktop phone frame within the viewport so its fixed footer stays flush with the frame. */
+@media screen and (min-width:500px){.app-page .app-shell{height:calc(100dvh - 56px);min-height:0;overflow-x:hidden;overflow-y:auto}.app-page .app-footer{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);width:100%;max-width:430px}}
 @media(max-width:370px){.app-page .routine-toggle{font-size:.6875rem;padding:6px}.app-page .care-row{gap:3px}.app-page .care-row>.art{width:51px}.app-page .mood-choice{font-size:.625rem}.app-page .mood-face{width:42px;height:42px}.app-page .change-options{gap:5px}.app-page .change-options>button{font-size:.6875rem;padding:8px}.app-page .summary-row{font-size:.6875rem}.app-page .summary-row>span:last-child{font-size:.625rem}}
 
 /* Personal-care choice and calm, easy-to-scan change cards. */

@@ -14,6 +14,12 @@ const { chromium } = require('playwright-core');
     assert.equal(await page.locator('#active-caregiver').innerText(), 'Anna Lewis');
     assert.equal(await page.locator('.switch-caregiver').count(), 0);
     assert.equal(await page.locator('#resident-name').innerText(), 'Margaret Rose');
+    await page.locator('.mobile-menu.app-menu>summary').click();
+    assert.equal(await page.locator('.developer-links a').first().isVisible(), false);
+    await page.locator('.developer-settings>summary').click();
+    assert.deepEqual(await page.locator('.developer-links a').allTextContents(), ['All screens ↗', 'Design system ↗']);
+    assert.equal(await page.locator('.developer-links a').first().isVisible(), true);
+    await page.locator('.mobile-menu.app-menu>summary').click();
     await page.locator('[data-item="breakfast"][data-answer="well"]').click();
     assert.match(await page.locator('#item-breakfast').innerText(), /Recorded by Anna/);
     await page.locator('#resident-switch').click();
@@ -70,12 +76,21 @@ const { chromium } = require('playwright-core');
     const desktop = await browser.newPage({ viewport: { width: 1440, height: 900 } });
     await desktop.goto('http://127.0.0.1:4173/care.html');
     const geometry = await desktop.evaluate(() => {
-      const frame = document.querySelector('.app-shell').getBoundingClientRect();
-      const footer = document.querySelector('.shift-footer').getBoundingClientRect();
-      return { gap: Math.abs(frame.bottom - footer.bottom), position: getComputedStyle(document.querySelector('.shift-footer')).position };
+      const frame = document.querySelector('.app-shell');
+      const footer = document.querySelector('.shift-footer');
+      const initialBottom = footer.getBoundingClientRect().bottom;
+      frame.scrollTop = frame.scrollHeight;
+      return {
+        gap: Math.abs(frame.getBoundingClientRect().bottom - footer.getBoundingClientRect().bottom),
+        position: getComputedStyle(footer).position,
+        remainsFixed: Math.abs(initialBottom - footer.getBoundingClientRect().bottom) < 1,
+        scrollable: frame.scrollTop > 0,
+      };
     });
-    assert.equal(geometry.position, 'absolute');
+    assert.equal(geometry.position, 'fixed');
     assert.ok(geometry.gap < 1, `desktop footer gap: ${geometry.gap}px`);
+    assert.equal(geometry.remainsFixed, true);
+    assert.equal(geometry.scrollable, true);
     await desktop.close();
     assert.deepEqual(errors, []);
     console.log('Next.js browser flow passed');
