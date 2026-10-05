@@ -137,3 +137,15 @@
 .resident-option small{font-size:11px;color:#64715b}
 .resident-option-arrow{margin-left:auto;font-size:20px;color:var(--olive)}
 @media(max-width:360px){.resident-switch{padding:10px}.app-page .resident-switch strong{font-size:15px}.review-header .review-step{display:none}}
+
+/* iOS Safari zooms the viewport when a small text field receives focus. */
+@media(max-width:760px){
+  .app-page input[type="search"],
+  .app-page input[type="text"],
+  .app-page input[type="date"],
+  .app-page input[type="file"],
+  .app-page textarea,
+  .app-page select,
+  .app-page .detail-dialog select{font-size:16px}
+  .profile-dialog,.sent-dialog{max-height:calc(100dvh - 32px);overflow-y:auto}
+}

@@ -83,7 +83,6 @@
       $('#resident-search').value = '';
       filterResidents();
       $('#resident-dialog').showModal();
-      $('#resident-search').focus();
     }
     if (event.target.closest('#profile-button')) {
       $('#profile-feedback').textContent = '';
@@ -335,7 +334,7 @@
       if (!dialog.open) dialog.showModal();
       dialog.scrollTop = 0;
       // Keep the keyboard closed on phones until the caregiver chooses a field.
-      $('.close-button').focus({ preventScroll: true });
+      dialog.querySelector('.close-button').focus({ preventScroll: true });
     }
     document.addEventListener('click', event => {
       const editObservation = event.target.closest('[data-edit-observation]');
