@@ -32,7 +32,7 @@
         holder.insertAdjacentHTML('afterend', '<button type="button" class="menu-resident-switch" id="menu-resident-switch" aria-haspopup="dialog" aria-controls="resident-dialog"></button>');
         menuResident = $('#menu-resident-switch');
       }
-      menuResident.innerHTML = `<span class="avatar ${portrait(D.residentId)}" aria-hidden="true"></span><span class="menu-resident-details"><span class="micro-label">CARING FOR</span><strong>${escape(resident.name)}</strong><small>Switch resident</small></span><span class="menu-resident-arrow" aria-hidden="true">⌄</span>`;
+      menuResident.innerHTML = `<span class="avatar ${portrait(D.residentId)}" aria-hidden="true"></span><span class="menu-resident-details"><span class="micro-label">CARING FOR</span><strong>${escape(resident.name)}</strong><small>Switch resident</small></span><span class="menu-resident-arrow" aria-hidden="true"></span>`;
     }
     if ($('#active-caregiver')) $('#active-caregiver').textContent = person().name;
     if ($('#caregiver-avatar')) { $('#caregiver-avatar').className = `avatar caregiver-avatar ${caregiverPortrait(state.caregiver)}`; $('#caregiver-avatar').textContent = ''; }

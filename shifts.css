@@ -7,7 +7,7 @@
 .menu-resident-details .micro-label{font-size:9px;color:#8a6757}
 .menu-resident-details strong{font-size:13px;line-height:1.2;font-weight:650}
 .menu-resident-details small{font-size:11px;color:#775b4b}
-.menu-resident-arrow{margin-left:auto;align-self:center;font-size:21px;color:#775b4b}
+.menu-resident-arrow{display:flex;align-items:center;justify-content:center;width:22px;height:22px;margin-left:auto;flex-shrink:0;color:#775b4b}
 .menu-caregiver{display:flex;align-items:center;gap:11px;padding:3px 9px 8px}
 .menu-caregiver .avatar{width:39px;height:39px;background-color:#e8e6dc;font-size:13px}
 .menu-caregiver>div{display:flex;flex-direction:column;gap:3px;font-size:14px}
@@ -97,7 +97,8 @@
 .resident-summary{display:flex;flex-direction:column;gap:5px;min-width:0}
 .resident-summary .micro-label{font-size:9px;color:#8a6757}
 .app-page .resident-switch strong{font-size:17px;font-weight:650;line-height:1.2}
-.resident-chevron{margin-left:auto;width:34px;height:34px;display:flex;align-items:center;justify-content:center;border:1px solid #dec8b9;border-radius:50%;background:#fff9f4;font-size:25px;line-height:1;color:#775b4b;align-self:center;flex-shrink:0}
+.resident-chevron{margin-left:auto;width:34px;height:34px;display:flex;align-items:center;justify-content:center;border:1px solid #dec8b9;border-radius:50%;background:#fff9f4;color:#775b4b;align-self:center;flex-shrink:0}
+.resident-chevron::after,.menu-resident-arrow::after{content:"";display:block;width:8px;height:8px;margin-top:-4px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg)}
 .resident-photo{background-image:url('assets/resident-portraits.png');background-size:300% 100%;background-repeat:no-repeat;background-color:var(--peach);color:transparent}
 .resident-photo--margaret{background-position:0 0}
 .resident-photo--evelyn{background-position:50% 0}
