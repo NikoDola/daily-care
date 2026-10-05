@@ -21,9 +21,18 @@
   const caregiverPortrait = id => `caregiver-photo caregiver-photo--${id}`;
   const observationHTML = item => `<div class="later-observation"><strong>${escape(item.category === 'Mood' && item.status ? `${item.status} later in the day` : item.category)}</strong>${item.note ? `<p class="answer-note">${escape(item.note)}</p>` : ''}<span class="byline">Recorded by ${escape(D.people[item.caregiver]?.first || '')} · ${escape(D.people[item.caregiver]?.shift || '')}</span></div>`;
   if (embedded) document.documentElement.classList.add('embedded');
+  if ($('#menu-caregiver') && !$('#resident-dialog')) document.body.insertAdjacentHTML('beforeend', `<dialog id="resident-dialog" class="resident-dialog" aria-labelledby="resident-dialog-title"><div class="sheet-top"><span class="eyebrow">YOUR RESIDENTS</span><button class="close-button" type="button" data-action="close-residents" aria-label="Close resident list">×</button></div><h2 id="resident-dialog-title">Whose day are you recording?</h2><p>Each resident has a separate care record in this demo.</p><label class="resident-search" for="resident-search">Find a resident</label><div class="resident-search-field"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg><input id="resident-search" type="search" placeholder="Search by name" autocomplete="off" aria-controls="resident-list"></div><p id="resident-empty" class="resident-empty" role="status" hidden>No residents found.</p><div id="resident-list"></div></dialog>`);
   function updateIdentity() {
     const holder = $('#menu-caregiver');
     if (holder) holder.innerHTML = `<div class="menu-caregiver"><span class="avatar ${caregiverPortrait(state.caregiver)}" aria-hidden="true"></span><div><span class="micro-label">SIGNED IN AS</span><strong>${person().name}</strong></div></div><p class="menu-shift">${person().shift}</p>`;
+    if (holder) {
+      let menuResident = $('#menu-resident-switch');
+      if (!menuResident) {
+        holder.parentElement.querySelector('.menu-label').insertAdjacentHTML('afterend', '<button type="button" class="menu-resident-switch" id="menu-resident-switch" aria-haspopup="dialog" aria-controls="resident-dialog"></button>');
+        menuResident = $('#menu-resident-switch');
+      }
+      menuResident.innerHTML = `<span class="avatar ${portrait(D.residentId)}" aria-hidden="true"></span><span class="menu-resident-details"><span class="micro-label">CARING FOR</span><strong>${escape(resident.name)}</strong><small>Switch resident</small></span><span class="menu-resident-arrow" aria-hidden="true">⌄</span>`;
+    }
     if ($('#active-caregiver')) $('#active-caregiver').textContent = person().name;
     if ($('#caregiver-avatar')) { $('#caregiver-avatar').className = `avatar caregiver-avatar ${caregiverPortrait(state.caregiver)}`; $('#caregiver-avatar').textContent = ''; }
     if ($('#caregiver-shift')) $('#caregiver-shift').textContent = person().shift;
@@ -48,7 +57,9 @@
       const focus = target.searchParams.get('focus') || target.hash.slice(1).replace(/-title$/, '');
       link.href = D.link(target.pathname.split('/').pop(), focus);
     }
-    if (event.target.closest('#resident-switch')) {
+    if (event.target.closest('#resident-switch, #menu-resident-switch')) {
+      const menu = event.target.closest('.app-menu');
+      if (menu) menu.open = false;
       $('#resident-search').value = '';
       filterResidents();
       $('#resident-dialog').showModal();

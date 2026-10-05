@@ -1,4 +1,13 @@
 /* Small additions to the original DailyCare components. */
+.menu-resident-switch{display:flex;align-items:center;gap:9px;width:100%;min-height:72px;margin:0 0 9px;padding:9px;text-align:left;background:#f7ebe2;border:1px solid #e6d4c8;border-radius:11px;color:var(--ink);cursor:pointer}
+.menu-resident-switch:hover{background:#f3e2d5;border-color:#d5bcae}
+.menu-resident-switch:focus-visible{outline:3px solid #947c48;outline-offset:2px}
+.menu-resident-switch>.avatar{width:43px;height:43px;flex-shrink:0;border:2px solid #fff9f4}
+.menu-resident-details{display:flex;flex-direction:column;gap:2px;min-width:0}
+.menu-resident-details .micro-label{font-size:9px;color:#8a6757}
+.menu-resident-details strong{font-size:13px;line-height:1.2;font-weight:650}
+.menu-resident-details small{font-size:11px;color:#775b4b}
+.menu-resident-arrow{margin-left:auto;align-self:center;font-size:21px;color:#775b4b}
 .menu-caregiver{display:flex;align-items:center;gap:11px;padding:16px 9px 8px;border-top:1px solid var(--line);margin-top:12px}
 .menu-caregiver .avatar{width:39px;height:39px;background-color:#e8e6dc;font-size:13px}
 .menu-caregiver>div{display:flex;flex-direction:column;gap:3px;font-size:14px}
